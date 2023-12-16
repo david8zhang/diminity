@@ -1,10 +1,29 @@
+import { Constants } from './Constants'
+import { Grid } from './Grid'
+
 export class Map {
   private scene: Phaser.Scene
   private tilemap!: Phaser.Tilemaps.Tilemap
+  private grid!: Grid
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene
     this.initTilemap()
+    this.grid = new Grid(this.scene, {
+      width: Constants.GAME_WIDTH,
+      height: Constants.GAME_HEIGHT,
+      cellSize: Constants.CELL_SIZE,
+    })
+  }
+
+  getRowColForWorldPosition(x: number, y: number) {
+    const cell = this.grid.getCellAtWorldPosition(x, y)
+    return { row: cell.gridRow, col: cell.gridCol }
+  }
+
+  getWorldPositionForRowCol(row: number, col: number) {
+    const cell = this.grid.getCellAtRowCol(row, col)
+    return { x: cell.centerX, y: cell.centerY }
   }
 
   initTilemap() {
