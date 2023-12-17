@@ -1,5 +1,7 @@
 import Phaser from 'phaser'
 
+import OutlinePipelinePlugin from 'phaser3-rex-plugins/plugins/outlinepipeline-plugin'
+
 import Game from './scenes/Game'
 import { Constants } from './core/Constants'
 import { Preload } from './scenes/Preload'
@@ -18,6 +20,15 @@ const config: Phaser.Types.Core.GameConfig = {
   },
   dom: {
     createContainer: true,
+  },
+  plugins: {
+    global: [
+      {
+        key: 'rexOutlinePipeline',
+        plugin: OutlinePipelinePlugin,
+        start: true,
+      },
+    ],
   },
   pixelArt: true,
   scale: {

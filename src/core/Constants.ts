@@ -9,6 +9,7 @@ export class Constants {
   public static GAME_WIDTH = 800
   public static GAME_HEIGHT = 640
   public static CELL_SIZE = 16
+  public static OUTLINE_COLOR = 0xffd700
 
   public static DEFAULT_PLAYER_CONFIG = [
     {
@@ -33,4 +34,6 @@ export class Constants {
       texture: 'rogue',
     },
   ]
+
+  public static ENEMY_TYPES = ['rat', 'spider']
 }

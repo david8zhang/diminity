@@ -5,6 +5,7 @@ export class Map {
   private scene: Phaser.Scene
   private tilemap!: Phaser.Tilemaps.Tilemap
   private grid!: Grid
+  public enemyLayer!: Phaser.Tilemaps.TilemapLayer
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene
@@ -35,6 +36,8 @@ export class Map {
     this.createLayer('Walls', tileset)
     this.createLayer('Elevated', tileset)
     this.createLayer('Ladder', tileset)
+    this.enemyLayer = this.createLayer('Enemies', tileset)
+    this.enemyLayer.setVisible(false)
   }
 
   createLayer(layerName: string, tileset: Phaser.Tilemaps.Tileset) {
