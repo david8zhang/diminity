@@ -18,6 +18,10 @@ export class CameraManager {
       if (!p.isDown) return
       mainCamera.scrollX -= (p.x - p.prevPosition.x) / mainCamera.zoom
       mainCamera.scrollY -= (p.y - p.prevPosition.y) / mainCamera.zoom
+      this.fixedZoomCenter = {
+        x: mainCamera.centerX + mainCamera.scrollX,
+        y: mainCamera.centerY + mainCamera.scrollY,
+      }
     })
   }
 
@@ -27,7 +31,6 @@ export class CameraManager {
       (p: Phaser.Input.Pointer, gameObjects, deltaX: number, deltaY: number) => {
         if (p.deltaY > 0) {
           this.scene.cameras.main.setZoom(this.scene.cameras.main.zoom + 0.25)
-
           if (!this.fixedZoomCenter) {
             this.fixedZoomCenter = { x: p.x, y: p.y }
           }
