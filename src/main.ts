@@ -5,6 +5,7 @@ import OutlinePipelinePlugin from 'phaser3-rex-plugins/plugins/outlinepipeline-p
 import Game from './scenes/Game'
 import { Constants } from './core/Constants'
 import { Preload } from './scenes/Preload'
+import { UI } from './scenes/UI'
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -34,7 +35,7 @@ const config: Phaser.Types.Core.GameConfig = {
   scale: {
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
-  scene: [Preload, Game],
+  scene: [Preload, Game, UI],
 }
 
 export default new Phaser.Game(config)
