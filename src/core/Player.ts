@@ -1,4 +1,4 @@
-import Game from '~/scenes/Game'
+import Game from '../scenes/Game'
 import { PartyMember, PartyMemberConfig } from './PartyMember'
 import { Constants } from './Constants'
 

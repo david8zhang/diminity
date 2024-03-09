@@ -19,7 +19,7 @@ export class Grid {
     this.graphics = this.scene.add.graphics()
     this.cellSize = config.cellSize
     this.initGrid(config)
-    this.scene.input.keyboard.on('keyup', (e) => {
+    this.scene.input.keyboard!.on('keyup', (e: Phaser.Input.Keyboard.Key) => {
       if (e.keyCode == Phaser.Input.Keyboard.KeyCodes.BACKTICK) {
         this.toggleGridVisibility()
       }

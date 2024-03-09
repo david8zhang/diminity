@@ -1,10 +1,10 @@
 import Phaser from 'phaser'
-import { CPU } from '~/core/CPU'
-import { CameraManager } from '~/core/CameraManager'
-import { Constants, Side } from '~/core/Constants'
-import { Map } from '~/core/Map'
-import { PartyMemberConfig } from '~/core/PartyMember'
-import { Player } from '~/core/Player'
+import { CPU } from '../core/CPU'
+import { CameraManager } from '../core/CameraManager'
+import { Constants, Side } from '../core/Constants'
+import { Map } from '../core/Map'
+import { PartyMemberConfig } from '../core/PartyMember'
+import { Player } from '../core/Player'
 
 export default class Game extends Phaser.Scene {
   private static _instance: Game

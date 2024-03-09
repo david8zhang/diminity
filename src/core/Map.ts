@@ -31,17 +31,17 @@ export class Map {
     this.tilemap = this.scene.make.tilemap({
       key: 'map-1',
     })
-    const tileset = this.tilemap.addTilesetImage('dungeon-tiles', 'dungeon-tiles')
+    const tileset = this.tilemap.addTilesetImage('dungeon-tiles', 'dungeon-tiles')!
     this.createLayer('Ground', tileset)
     this.createLayer('Walls', tileset)
     this.createLayer('Elevated', tileset)
     this.createLayer('Ladder', tileset)
-    this.enemyLayer = this.createLayer('Enemies', tileset)
+    this.enemyLayer = this.createLayer('Enemies', tileset)!
     this.enemyLayer.setVisible(false)
   }
 
   createLayer(layerName: string, tileset: Phaser.Tilemaps.Tileset) {
-    const layer = this.tilemap.createLayer(layerName, tileset)
+    const layer = this.tilemap.createLayer(layerName, tileset)!
     layer.setOrigin(0)
     layer.setCollisionByExclusion([-1])
     return layer

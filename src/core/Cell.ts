@@ -1,5 +1,3 @@
-import Game from '~/scenes/Game'
-
 export interface CellConfig {
   gridRow: number
   gridCol: number

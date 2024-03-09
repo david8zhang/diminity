@@ -1,4 +1,4 @@
-import { Constants } from '~/core/Constants'
+import { Constants } from '../core/Constants'
 
 export class UI extends Phaser.Scene {
   constructor() {

@@ -19,9 +19,6 @@ const config: Phaser.Types.Core.GameConfig = {
       // debug: true,
     },
   },
-  dom: {
-    createContainer: true,
-  },
   plugins: {
     global: [
       {
@@ -38,4 +35,4 @@ const config: Phaser.Types.Core.GameConfig = {
   scene: [Preload, Game, UI],
 }
 
-export default new Phaser.Game(config)
+new Phaser.Game(config)

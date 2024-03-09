@@ -26,29 +26,26 @@ export class CameraManager {
   }
 
   setupZoomListener() {
-    this.scene.input.on(
-      Phaser.Input.Events.POINTER_WHEEL,
-      (p: Phaser.Input.Pointer, gameObjects, deltaX: number, deltaY: number) => {
-        if (p.deltaY > 0) {
-          this.scene.cameras.main.setZoom(this.scene.cameras.main.zoom + 0.25)
-          if (!this.fixedZoomCenter) {
-            this.fixedZoomCenter = { x: p.x, y: p.y }
-          }
-          this.scene.cameras.main.centerOn(this.fixedZoomCenter.x, this.fixedZoomCenter.y)
-        } else if (p.deltaY < 0) {
-          this.scene.cameras.main.setZoom(Math.max(1, this.scene.cameras.main.zoom - 0.25))
-          if (this.scene.cameras.main.zoom == 1) {
-            this.fixedZoomCenter = null
-          }
+    this.scene.input.on(Phaser.Input.Events.POINTER_WHEEL, (p: Phaser.Input.Pointer) => {
+      if (p.deltaY > 0) {
+        this.scene.cameras.main.setZoom(this.scene.cameras.main.zoom + 0.25)
+        if (!this.fixedZoomCenter) {
+          this.fixedZoomCenter = { x: p.x, y: p.y }
         }
-        this.scene.cameras.main.setBounds(
-          0,
-          0,
-          Constants.GAME_WIDTH,
-          Constants.GAME_HEIGHT +
-            (Constants.WINDOW_HEIGHT - Constants.GAME_HEIGHT) / this.scene.cameras.main.zoom
-        )
+        this.scene.cameras.main.centerOn(this.fixedZoomCenter.x, this.fixedZoomCenter.y)
+      } else if (p.deltaY < 0) {
+        this.scene.cameras.main.setZoom(Math.max(1, this.scene.cameras.main.zoom - 0.25))
+        if (this.scene.cameras.main.zoom == 1) {
+          this.fixedZoomCenter = null
+        }
       }
-    )
+      this.scene.cameras.main.setBounds(
+        0,
+        0,
+        Constants.GAME_WIDTH,
+        Constants.GAME_HEIGHT +
+          (Constants.WINDOW_HEIGHT - Constants.GAME_HEIGHT) / this.scene.cameras.main.zoom
+      )
+    })
   }
 }
