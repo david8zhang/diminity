@@ -2,6 +2,7 @@ import { PartyMember, PartyMemberConfig } from './PartyMember'
 import { Player } from './Player'
 import { Constants } from '../Constants'
 import Game from '../../scenes/Game'
+import { UI } from '../../scenes/UI'
 
 export enum ActionState {
   IDLE = 'IDLE',
@@ -28,6 +29,10 @@ export class PlayerPartyMember extends PartyMember {
         thickness: 2,
         outlineColor: Constants.OUTLINE_COLOR,
       })
+    }
+
+    if (UI.instance) {
+      UI.instance.selectPartyMember(this)
     }
   }
 

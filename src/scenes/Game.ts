@@ -5,6 +5,7 @@ import { Constants, Side } from '../core/Constants'
 import { Map } from '../core/map/Map'
 import { PartyMemberConfig } from '../core/controller/PartyMember'
 import { Player } from '../core/controller/Player'
+import { UI } from './UI'
 
 export default class Game extends Phaser.Scene {
   private static _instance: Game
@@ -71,6 +72,9 @@ export default class Game extends Phaser.Scene {
     this.cpu = new CPU(this, {
       partyConfig: this.loadCPUEnemyConfigs(),
     })
+  }
+
+  onUIReady() {
     this.player.startTurn()
   }
 }

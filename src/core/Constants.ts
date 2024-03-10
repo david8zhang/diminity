@@ -10,6 +10,7 @@ export class Constants {
   public static GAME_HEIGHT = 640
   public static CELL_SIZE = 16
   public static OUTLINE_COLOR = 0x7df9ff
+  public static ACTION_POINT_COLOR = 0x2ecc71
 
   public static DEFAULT_PLAYER_CONFIG = [
     {

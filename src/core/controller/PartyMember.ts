@@ -21,6 +21,7 @@ export class PartyMember {
   public maxHealth: number = 0
   public moveRange: number = 0
   public actionPointPerTurn: number = 0
+  public currActionPoints: number = 0
 
   constructor(game: Game, config: PartyMemberConfig) {
     this.game = game
@@ -29,6 +30,7 @@ export class PartyMember {
     this.maxHealth = config.maxHealth
     this.moveRange = config.moveRange
     this.actionPointPerTurn = config.actionPointPerTurn
+    this.currActionPoints = this.actionPointPerTurn
     this.sprite = this.game.add.sprite(config.position.x, config.position.y, config.texture)
   }
 }
