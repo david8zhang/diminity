@@ -15,7 +15,7 @@ export class CameraManager {
     )
     this.setupZoomListener()
     this.scene.input.on(Phaser.Input.Events.POINTER_MOVE, (p: Phaser.Input.Pointer) => {
-      if (!p.isDown) return
+      if (!p.middleButtonDown()) return
       mainCamera.scrollX -= (p.x - p.prevPosition.x) / mainCamera.zoom
       mainCamera.scrollY -= (p.y - p.prevPosition.y) / mainCamera.zoom
       this.fixedZoomCenter = {

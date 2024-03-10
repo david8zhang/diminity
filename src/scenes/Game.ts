@@ -1,17 +1,17 @@
 import Phaser from 'phaser'
-import { CPU } from '../core/CPU'
+import { CPU } from '../core/cpu/CPU'
 import { CameraManager } from '../core/CameraManager'
 import { Constants, Side } from '../core/Constants'
 import { Map } from '../core/Map'
 import { PartyMemberConfig } from '../core/PartyMember'
-import { Player } from '../core/Player'
+import { Player } from '../core/player/Player'
 
 export default class Game extends Phaser.Scene {
   private static _instance: Game
-  private map!: Map
-  private player!: Player
-  private cpu!: CPU
-  private currTurn: Side = Side.PLAYER
+  public map!: Map
+  public player!: Player
+  public cpu!: CPU
+  public currTurn: Side = Side.PLAYER
   public postFxPlugin: any
 
   constructor() {
@@ -23,25 +23,30 @@ export default class Game extends Phaser.Scene {
     return Game._instance
   }
 
-  loadPlayerPartyConfigs() {
+  loadPlayerPartyConfigs(): PartyMemberConfig[] {
     return Constants.DEFAULT_PLAYER_CONFIG.map((config) => {
       return {
         position: this.map.getWorldPositionForRowCol(config.rowColPos.row, config.rowColPos.col),
+        moveRange: config.moveRange,
+        maxHealth: config.maxHealth,
         texture: config.texture,
         id: Phaser.Utils.String.UUID(),
       }
     })
   }
 
-  loadCPUEnemyConfigs() {
+  loadCPUEnemyConfigs(): PartyMemberConfig[] {
     const enemyTilemapLayer = this.map.enemyLayer
     const enemyConfigs: PartyMemberConfig[] = []
     enemyTilemapLayer.forEachTile((tile) => {
       if (tile.index !== -1) {
+        const randEnemyConfig = Phaser.Utils.Array.GetRandom(Constants.ENEMY_TYPES)
         enemyConfigs.push({
           position: this.map.getWorldPositionForRowCol(tile.y, tile.x),
           id: Phaser.Utils.String.UUID(),
-          texture: Phaser.Utils.Array.GetRandom(Constants.ENEMY_TYPES),
+          texture: randEnemyConfig.texture,
+          moveRange: randEnemyConfig.moveRange,
+          maxHealth: randEnemyConfig.maxHealth,
         })
       }
     })

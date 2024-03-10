@@ -27,6 +27,44 @@ export class Map {
     return { x: cell.centerX, y: cell.centerY }
   }
 
+  getCenteredWorldPosition(worldX: number, worldY: number) {
+    const cell = this.grid.getCellAtWorldPosition(worldX, worldY)
+    return {
+      x: cell.centerX,
+      y: cell.centerY,
+    }
+  }
+
+  getTileDistance(x1: number, y1: number, x2: number, y2: number) {
+    const point1 = this.getRowColForWorldPosition(x1, y1)
+    const point2 = this.getRowColForWorldPosition(x2, y2)
+    return Phaser.Math.Distance.Snake(point1.col, point1.row, point2.col, point2.row)
+  }
+
+  highlightTiles(tilePositions: { row: number; col: number }[]) {
+    tilePositions.forEach((position) => {
+      const tile = this.tilemap.getTileAt(position.col, position.row, false, 'Ground')
+      if (tile) {
+        tile.setAlpha(0.8)
+      }
+    })
+  }
+
+  dehighlightTiles() {
+    for (let i = 0; i < this.grid.numRows; i++) {
+      for (let j = 0; j < this.grid.numCols; j++) {
+        const tile = this.tilemap.getTileAt(j, i, false, 'Ground')
+        if (tile) {
+          tile.setAlpha(1)
+        }
+      }
+    }
+  }
+
+  isRowColWithinBounds(row: number, col: number) {
+    return this.grid.withinBounds(row, col)
+  }
+
   initTilemap() {
     this.tilemap = this.scene.make.tilemap({
       key: 'map-1',

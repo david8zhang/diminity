@@ -13,10 +13,7 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
-    "baseUrl": "./src",
-    "paths": {
-      "~/*": ["./*"]
-    },
+    // "baseUrl": "./",
     "typeRoots": ["node_modules/@types", "node_modules/phaser/types"],
     "types": ["phaser"]
   },

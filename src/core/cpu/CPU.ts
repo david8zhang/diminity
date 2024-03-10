@@ -1,9 +1,10 @@
-import { PartyMember, PartyMemberConfig } from './PartyMember'
+import Game from '../../scenes/Game'
+import { PartyMember, PartyMemberConfig } from '../PartyMember'
 
 export class CPU {
-  private scene: Phaser.Scene
+  private scene: Game
   private partyMember: PartyMember[] = []
-  constructor(scene: Phaser.Scene) {
+  constructor(scene: Game) {
     this.scene = scene
   }
 

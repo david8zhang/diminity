@@ -9,7 +9,7 @@ export class Constants {
   public static GAME_WIDTH = 800
   public static GAME_HEIGHT = 640
   public static CELL_SIZE = 16
-  public static OUTLINE_COLOR = 0xffd700
+  public static OUTLINE_COLOR = 0x7df9ff
 
   public static DEFAULT_PLAYER_CONFIG = [
     {
@@ -17,6 +17,8 @@ export class Constants {
         row: 32,
         col: 23,
       },
+      maxHealth: 20,
+      moveRange: 4,
       texture: 'wizard',
     },
     {
@@ -24,6 +26,8 @@ export class Constants {
         row: 32,
         col: 25,
       },
+      maxHealth: 30,
+      moveRange: 3,
       texture: 'fighter',
     },
     {
@@ -31,9 +35,22 @@ export class Constants {
         row: 32,
         col: 27,
       },
+      maxHealth: 25,
+      moveRange: 5,
       texture: 'rogue',
     },
   ]
 
-  public static ENEMY_TYPES = ['rat', 'spider']
+  public static ENEMY_TYPES = [
+    {
+      texture: 'rat',
+      moveRange: 5,
+      maxHealth: 15,
+    },
+    {
+      texture: 'spider',
+      moveRange: 6,
+      maxHealth: 10,
+    },
+  ]
 }
