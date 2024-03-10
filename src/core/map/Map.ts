@@ -1,4 +1,4 @@
-import { Constants } from './Constants'
+import { Constants } from '../Constants'
 import { Grid } from './Grid'
 
 export class Map {
@@ -48,6 +48,33 @@ export class Map {
         tile.setAlpha(0.8)
       }
     })
+  }
+
+  tintTile(worldX: number, worldY: number, tint: number) {
+    const tile = this.tilemap.getTileAtWorldXY(
+      worldX,
+      worldY,
+      false,
+      this.scene.cameras.main,
+      'Ground'
+    )
+    if (tile) {
+      tile.setAlpha(1)
+      tile.tint = tint
+    }
+  }
+
+  clearTint(worldX: number, worldY: number) {
+    const tile = this.tilemap.getTileAtWorldXY(
+      worldX,
+      worldY,
+      false,
+      this.scene.cameras.main,
+      'Ground'
+    )
+    if (tile) {
+      tile.tint = 0xffffff
+    }
   }
 
   dehighlightTiles() {

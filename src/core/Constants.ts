@@ -20,6 +20,7 @@ export class Constants {
       maxHealth: 20,
       moveRange: 4,
       texture: 'wizard',
+      actionPointPerTurn: 5,
     },
     {
       rowColPos: {
@@ -29,6 +30,7 @@ export class Constants {
       maxHealth: 30,
       moveRange: 3,
       texture: 'fighter',
+      actionPointPerTurn: 3,
     },
     {
       rowColPos: {
@@ -38,6 +40,7 @@ export class Constants {
       maxHealth: 25,
       moveRange: 5,
       texture: 'rogue',
+      actionPointPerTurn: 4,
     },
   ]
 
@@ -46,11 +49,13 @@ export class Constants {
       texture: 'rat',
       moveRange: 5,
       maxHealth: 15,
+      actionPointPerTurn: 3,
     },
     {
       texture: 'spider',
       moveRange: 6,
       maxHealth: 10,
+      actionPointPerTurn: 3,
     },
   ]
 }

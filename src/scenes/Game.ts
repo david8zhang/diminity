@@ -1,10 +1,10 @@
 import Phaser from 'phaser'
-import { CPU } from '../core/cpu/CPU'
+import { CPU } from '../core/controller/CPU'
 import { CameraManager } from '../core/CameraManager'
 import { Constants, Side } from '../core/Constants'
-import { Map } from '../core/Map'
-import { PartyMemberConfig } from '../core/PartyMember'
-import { Player } from '../core/player/Player'
+import { Map } from '../core/map/Map'
+import { PartyMemberConfig } from '../core/controller/PartyMember'
+import { Player } from '../core/controller/Player'
 
 export default class Game extends Phaser.Scene {
   private static _instance: Game
@@ -23,12 +23,17 @@ export default class Game extends Phaser.Scene {
     return Game._instance
   }
 
+  isSpaceOccupied(x: number, y: number) {
+    return this.cpu.isSpaceOccupied(x, y) || this.player.isSpaceOccupied(x, y)
+  }
+
   loadPlayerPartyConfigs(): PartyMemberConfig[] {
     return Constants.DEFAULT_PLAYER_CONFIG.map((config) => {
       return {
         position: this.map.getWorldPositionForRowCol(config.rowColPos.row, config.rowColPos.col),
         moveRange: config.moveRange,
         maxHealth: config.maxHealth,
+        actionPointPerTurn: config.actionPointPerTurn,
         texture: config.texture,
         id: Phaser.Utils.String.UUID(),
       }
@@ -47,6 +52,7 @@ export default class Game extends Phaser.Scene {
           texture: randEnemyConfig.texture,
           moveRange: randEnemyConfig.moveRange,
           maxHealth: randEnemyConfig.maxHealth,
+          actionPointPerTurn: randEnemyConfig.actionPointPerTurn,
         })
       }
     })
@@ -59,13 +65,12 @@ export default class Game extends Phaser.Scene {
 
     new CameraManager(this)
     this.map = new Map(this)
-    const partyConfig = this.loadPlayerPartyConfigs()
-    const cpuConfig = this.loadCPUEnemyConfigs()
     this.player = new Player(this, {
-      party: partyConfig,
+      partyConfig: this.loadPlayerPartyConfigs(),
     })
-    this.cpu = new CPU(this)
-    this.cpu.initializeEnemies(cpuConfig)
+    this.cpu = new CPU(this, {
+      partyConfig: this.loadCPUEnemyConfigs(),
+    })
     this.player.startTurn()
   }
 }

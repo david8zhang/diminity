@@ -1,31 +1,25 @@
 import Game from '../../scenes/Game'
-import { PartyMemberConfig } from '../PartyMember'
+import { PartyController, PartyControllerConfig } from './PartyController'
+import { PartyMemberConfig } from './PartyMember'
 import { ActionState, PlayerPartyMember } from './PlayerPartyMember'
 
-export interface PlayerConfig {
-  party: PartyMemberConfig[]
-}
-
-export class Player {
-  private scene: Game
-  private partyMembers: { [key: string]: PlayerPartyMember } = {}
+export class Player extends PartyController {
   private selectedPartyMemberId: string = ''
 
-  constructor(scene: Game, config: PlayerConfig) {
-    this.scene = scene
-    this.setupPartyMembers(config)
+  constructor(game: Game, config: PartyControllerConfig) {
+    super(game, config)
+    this.selectedPartyMemberId = config.partyConfig[0].id
     this.setupInputListener()
   }
 
-  setupPartyMembers(config: PlayerConfig) {
-    config.party.forEach((config: PartyMemberConfig) => {
-      this.partyMembers[config.id] = new PlayerPartyMember(this.scene, this, config)
+  setupPartyMembers(config: PartyControllerConfig) {
+    config.partyConfig.forEach((config: PartyMemberConfig) => {
+      this.partyMembers[config.id] = new PlayerPartyMember(this.game, this, config)
     })
-    this.selectedPartyMemberId = config.party[0].id
   }
 
   setupInputListener() {
-    this.scene.input.on(Phaser.Input.Events.POINTER_DOWN, (pointer: Phaser.Input.Pointer) => {
+    this.game.input.on(Phaser.Input.Events.POINTER_DOWN, (pointer: Phaser.Input.Pointer) => {
       switch (this.selectedPartyMember.actionState) {
         case ActionState.SELECTING_MOVE_DEST: {
           const { worldX, worldY } = pointer
@@ -33,7 +27,7 @@ export class Player {
         }
       }
     })
-    this.scene.input.keyboard!.on(
+    this.game.input.keyboard!.on(
       Phaser.Input.Keyboard.Events.ANY_KEY_UP,
       (e: Phaser.Input.Keyboard.Key) => {
         switch (e.keyCode) {
@@ -49,15 +43,17 @@ export class Player {
   }
 
   get selectedPartyMember(): PlayerPartyMember {
-    return this.partyMembers[this.selectedPartyMemberId]
+    return this.partyMembers[this.selectedPartyMemberId] as PlayerPartyMember
   }
 
   handlePartyMemberClick(partyMemberId: string) {
     if (partyMemberId !== this.selectedPartyMemberId) {
-      const prevPartyMemberToAct = this.partyMembers[this.selectedPartyMemberId]
+      const prevPartyMemberToAct = this.partyMembers[
+        this.selectedPartyMemberId
+      ] as PlayerPartyMember
       prevPartyMemberToAct.unselect()
       this.selectedPartyMemberId = partyMemberId
-      const partyMemberToAct = this.partyMembers[this.selectedPartyMemberId]
+      const partyMemberToAct = this.partyMembers[this.selectedPartyMemberId] as PlayerPartyMember
       partyMemberToAct.select()
     } else {
       this.selectedPartyMember.beginMoveOrder()
@@ -65,7 +61,6 @@ export class Player {
   }
 
   startTurn() {
-    const partyMemberToMove = this.partyMembers[this.selectedPartyMemberId]
-    partyMemberToMove.select()
+    this.selectedPartyMember.select()
   }
 }

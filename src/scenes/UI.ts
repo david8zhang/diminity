@@ -13,7 +13,7 @@ export class UI extends Phaser.Scene {
         Constants.GAME_WIDTH,
         Constants.WINDOW_HEIGHT - Constants.GAME_HEIGHT
       )
-      .setFillStyle(0x555555)
+      .setFillStyle(0x000000)
       .setOrigin(0)
   }
 }

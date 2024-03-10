@@ -1,4 +1,4 @@
-import Game from '../scenes/Game'
+import Game from '../../scenes/Game'
 
 export interface PartyMemberConfig {
   id: string
@@ -9,6 +9,7 @@ export interface PartyMemberConfig {
   texture: string
   maxHealth: number
   moveRange: number
+  actionPointPerTurn: number
 }
 
 export class PartyMember {
@@ -16,12 +17,10 @@ export class PartyMember {
   public sprite: Phaser.GameObjects.Sprite
   public id: string
 
-  // Curr health
   public currHealth: number = 0
   public maxHealth: number = 0
-
-  // Movement range
   public moveRange: number = 0
+  public actionPointPerTurn: number = 0
 
   constructor(game: Game, config: PartyMemberConfig) {
     this.game = game
@@ -29,8 +28,7 @@ export class PartyMember {
     this.currHealth = config.maxHealth
     this.maxHealth = config.maxHealth
     this.moveRange = config.moveRange
+    this.actionPointPerTurn = config.actionPointPerTurn
     this.sprite = this.game.add.sprite(config.position.x, config.position.y, config.texture)
   }
-
-  public getCurrRowColPosition() {}
 }

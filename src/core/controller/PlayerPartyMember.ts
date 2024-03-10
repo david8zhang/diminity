@@ -1,4 +1,4 @@
-import { PartyMember, PartyMemberConfig } from '../PartyMember'
+import { PartyMember, PartyMemberConfig } from './PartyMember'
 import { Player } from './Player'
 import { Constants } from '../Constants'
 import Game from '../../scenes/Game'
@@ -44,12 +44,8 @@ export class PlayerPartyMember extends PartyMember {
   }
 
   moveToPosition(worldX: number, worldY: number) {
-    const currPosition = this.game.map.getCenteredWorldPosition(this.sprite.x, this.sprite.y)
     const newPosition = this.game.map.getCenteredWorldPosition(worldX, worldY)
-    if (
-      (currPosition.x === newPosition.x && currPosition.y === newPosition.y) ||
-      !this.canMoveToPosition(newPosition.x, newPosition.y)
-    ) {
+    if (!this.canMoveToPosition(newPosition.x, newPosition.y)) {
       return
     }
     const distance = this.game.map.getTileDistance(
@@ -72,16 +68,22 @@ export class PlayerPartyMember extends PartyMember {
       ease: Phaser.Math.Easing.Sine.Out,
       onStart: () => {
         this.actionState = ActionState.MOVING
+        this.game.map.tintTile(newPosition.x, newPosition.y, 0x00ff00)
       },
       onComplete: () => {
         this.goBackToIdle()
+        this.game.map.clearTint(newPosition.x, newPosition.y)
       },
     })
   }
 
   canMoveToPosition(x: number, y: number) {
-    const tileDistance = this.game.map.getTileDistance(this.sprite.x, this.sprite.y, x, y)
-    return tileDistance <= this.moveRange
+    const currPosition = this.game.map.getCenteredWorldPosition(this.sprite.x, this.sprite.y)
+    const tileDistance = this.game.map.getTileDistance(currPosition.x, currPosition.y, x, y)
+    const isAlreadyAtPosition = currPosition.x == x && currPosition.y == y
+    return (
+      !isAlreadyAtPosition && tileDistance <= this.moveRange && !this.game.isSpaceOccupied(x, y)
+    )
   }
 
   goBackToIdle() {
