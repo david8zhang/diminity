@@ -70,7 +70,6 @@ export class PlayerPartyMember extends PartyMember {
         to: newPosition.y,
       },
       duration: (distance / 5) * 500,
-      ease: Phaser.Math.Easing.Sine.Out,
       onStart: () => {
         this.actionState = ActionState.MOVING
         this.game.map.tintTile(newPosition.x, newPosition.y, 0x00ff00)
@@ -93,12 +92,28 @@ export class PlayerPartyMember extends PartyMember {
 
   goBackToIdle() {
     this.actionState = ActionState.IDLE
+    this.game.map.clearAllTint(this.getMoveableSquares())
     this.game.map.dehighlightTiles()
+    UI.instance.actionPointDisplay.showAvailableActionPoints(this)
+  }
+
+  showActionPointCostForMove(worldX: number, worldY: number) {
+    this.game.map.clearAllTint(this.getMoveableSquares())
+    const tileDistance = this.game.map.getTileDistance(this.sprite.x, this.sprite.y, worldX, worldY)
+    const costForMove = this.apCostPerSquareMoved * tileDistance
+    if (tileDistance <= this.moveRange) {
+      UI.instance.actionPointDisplay.displayActionPotentialPointCost(this, costForMove)
+      this.game.map.tintTile(worldX, worldY, 0x00ff00)
+    }
   }
 
   highlightMoveableSquares() {
     const moveableSquarePositions = this.getMoveableSquares()
     this.game.map.highlightTiles(moveableSquarePositions)
+  }
+
+  get moveRange() {
+    return this.currActionPoints / this.apCostPerSquareMoved
   }
 
   getMoveableSquares(): { row: number; col: number }[] {

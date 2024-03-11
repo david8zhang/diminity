@@ -11,6 +11,7 @@ export class Constants {
   public static CELL_SIZE = 16
   public static OUTLINE_COLOR = 0x7df9ff
   public static ACTION_POINT_COLOR = 0x2ecc71
+  public static ACTION_POINT_COST_COLOR = 0xd91e18
 
   public static DEFAULT_PLAYER_CONFIG = [
     {
@@ -19,9 +20,9 @@ export class Constants {
         col: 23,
       },
       maxHealth: 20,
-      moveRange: 4,
+      apCostPerSquareMoved: 0.5,
       texture: 'wizard',
-      actionPointPerTurn: 5,
+      actionPointPerTurn: 4,
     },
     {
       rowColPos: {
@@ -29,8 +30,8 @@ export class Constants {
         col: 25,
       },
       maxHealth: 30,
-      moveRange: 3,
       texture: 'fighter',
+      apCostPerSquareMoved: 0.5,
       actionPointPerTurn: 3,
     },
     {
@@ -39,8 +40,8 @@ export class Constants {
         col: 27,
       },
       maxHealth: 25,
-      moveRange: 5,
       texture: 'rogue',
+      apCostPerSquareMoved: 0.5,
       actionPointPerTurn: 4,
     },
   ]
@@ -51,12 +52,14 @@ export class Constants {
       moveRange: 5,
       maxHealth: 15,
       actionPointPerTurn: 3,
+      apCostPerSquareMoved: 1,
     },
     {
       texture: 'spider',
       moveRange: 6,
       maxHealth: 10,
       actionPointPerTurn: 3,
+      apCostPerSquareMoved: 1,
     },
   ]
 }

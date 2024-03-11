@@ -32,9 +32,9 @@ export default class Game extends Phaser.Scene {
     return Constants.DEFAULT_PLAYER_CONFIG.map((config) => {
       return {
         position: this.map.getWorldPositionForRowCol(config.rowColPos.row, config.rowColPos.col),
-        moveRange: config.moveRange,
         maxHealth: config.maxHealth,
         actionPointPerTurn: config.actionPointPerTurn,
+        apCostPerSquareMoved: config.apCostPerSquareMoved,
         texture: config.texture,
         id: Phaser.Utils.String.UUID(),
       }
@@ -51,9 +51,9 @@ export default class Game extends Phaser.Scene {
           position: this.map.getWorldPositionForRowCol(tile.y, tile.x),
           id: Phaser.Utils.String.UUID(),
           texture: randEnemyConfig.texture,
-          moveRange: randEnemyConfig.moveRange,
           maxHealth: randEnemyConfig.maxHealth,
           actionPointPerTurn: randEnemyConfig.actionPointPerTurn,
+          apCostPerSquareMoved: randEnemyConfig.apCostPerSquareMoved,
         })
       }
     })

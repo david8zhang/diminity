@@ -6,7 +6,7 @@ import Game from './Game'
 export class UI extends Phaser.Scene {
   public static BOTTOM_BAR_Y_POS = Constants.WINDOW_HEIGHT - Constants.GAME_HEIGHT
   private static _instance: UI
-  private actionPointDisplay!: ActionPointDisplay
+  public actionPointDisplay!: ActionPointDisplay
   private onCreateHook: (() => void) | null = null
 
   constructor() {
@@ -33,6 +33,6 @@ export class UI extends Phaser.Scene {
   }
 
   selectPartyMember(partyMember: PlayerPartyMember) {
-    this.actionPointDisplay.displayActionPointForPartyMember(partyMember)
+    this.actionPointDisplay.showAvailableActionPoints(partyMember)
   }
 }

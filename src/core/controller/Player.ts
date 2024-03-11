@@ -19,6 +19,15 @@ export class Player extends PartyController {
   }
 
   setupInputListener() {
+    this.game.input.on(Phaser.Input.Events.POINTER_MOVE, (pointer: Phaser.Input.Pointer) => {
+      switch (this.selectedPartyMember.actionState) {
+        case ActionState.SELECTING_MOVE_DEST: {
+          this.selectedPartyMember.showActionPointCostForMove(pointer.worldX, pointer.worldY)
+          break
+        }
+      }
+    })
+
     this.game.input.on(Phaser.Input.Events.POINTER_DOWN, (pointer: Phaser.Input.Pointer) => {
       switch (this.selectedPartyMember.actionState) {
         case ActionState.SELECTING_MOVE_DEST: {

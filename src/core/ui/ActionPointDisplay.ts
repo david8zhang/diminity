@@ -50,7 +50,7 @@ export class ActionPointDisplay {
     }
   }
 
-  public displayActionPointForPartyMember(partyMember: PartyMember) {
+  public showAvailableActionPoints(partyMember: PartyMember) {
     // Reset fill style
     this.actionPointCircles.forEach((circle) => {
       circle.setFillStyle(0x444444)
@@ -59,6 +59,17 @@ export class ActionPointDisplay {
     for (let i = 0; i < partyMember.currActionPoints; i++) {
       const actionPointOrb = this.actionPointCircles[i]
       actionPointOrb.setFillStyle(Constants.ACTION_POINT_COLOR)
+    }
+  }
+
+  public displayActionPotentialPointCost(partyMember: PartyMember, cost: number) {
+    // Reset available action points
+    this.showAvailableActionPoints(partyMember)
+
+    const lastOrbIndex = partyMember.currActionPoints - 1
+    for (let i = lastOrbIndex; i >= lastOrbIndex - cost; i--) {
+      const actionPointOrb = this.actionPointCircles[i]
+      actionPointOrb.setFillStyle(Constants.ACTION_POINT_COST_COLOR)
     }
   }
 }

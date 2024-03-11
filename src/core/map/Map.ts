@@ -64,6 +64,16 @@ export class Map {
     }
   }
 
+  clearAllTint(tilePositions: { row: number; col: number }[]) {
+    tilePositions.forEach((pos) => {
+      const tile = this.tilemap.getTileAt(pos.col, pos.row, false, 'Ground')
+      if (tile) {
+        tile.tint = 0xffffff
+        tile.setAlpha(0.8)
+      }
+    })
+  }
+
   clearTint(worldX: number, worldY: number) {
     const tile = this.tilemap.getTileAtWorldXY(
       worldX,
