@@ -55,7 +55,6 @@ export class ActionPointDisplay {
     this.actionPointCircles.forEach((circle) => {
       circle.setFillStyle(0x444444)
     })
-
     for (let i = 0; i < partyMember.currActionPoints; i++) {
       const actionPointOrb = this.actionPointCircles[i]
       actionPointOrb.setFillStyle(Constants.ACTION_POINT_COLOR)
@@ -66,8 +65,7 @@ export class ActionPointDisplay {
     // Reset available action points
     this.showAvailableActionPoints(partyMember)
 
-    const lastOrbIndex = partyMember.currActionPoints - 1
-    for (let i = lastOrbIndex; i >= lastOrbIndex - cost; i--) {
+    for (let i = partyMember.currActionPoints - 1; i >= partyMember.currActionPoints - cost; i--) {
       const actionPointOrb = this.actionPointCircles[i]
       actionPointOrb.setFillStyle(Constants.ACTION_POINT_COST_COLOR)
     }

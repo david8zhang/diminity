@@ -53,6 +53,13 @@ export class PlayerPartyMember extends PartyMember {
     if (!this.canMoveToPosition(newPosition.x, newPosition.y)) {
       return
     }
+
+    // Subtract action points
+    const tileDistance = this.game.map.getTileDistance(this.sprite.x, this.sprite.y, worldX, worldY)
+    const apCostForMove = Math.round(this.apCostPerSquareMoved * tileDistance)
+    this.currActionPoints -= apCostForMove
+    UI.instance.actionPointDisplay.showAvailableActionPoints(this)
+
     const distance = this.game.map.getTileDistance(
       this.sprite.x,
       this.sprite.y,
@@ -100,7 +107,8 @@ export class PlayerPartyMember extends PartyMember {
   showActionPointCostForMove(worldX: number, worldY: number) {
     this.game.map.clearAllTint(this.getMoveableSquares())
     const tileDistance = this.game.map.getTileDistance(this.sprite.x, this.sprite.y, worldX, worldY)
-    const costForMove = this.apCostPerSquareMoved * tileDistance
+    const costForMove = Math.round(this.apCostPerSquareMoved * tileDistance)
+
     if (tileDistance <= this.moveRange) {
       UI.instance.actionPointDisplay.displayActionPotentialPointCost(this, costForMove)
       this.game.map.tintTile(worldX, worldY, 0x00ff00)
@@ -128,7 +136,7 @@ export class PlayerPartyMember extends PartyMember {
     ]
     const moveableSquares: { row: number; col: number }[] = []
     let distance = 0
-    while (queue.length > 0 && distance < this.moveRange) {
+    while (queue.length > 0 && distance <= this.moveRange) {
       const queueSize = queue.length
       for (let i = 0; i < queueSize; i++) {
         const cell = queue.shift()
