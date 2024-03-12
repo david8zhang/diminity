@@ -5,13 +5,17 @@ export enum Side {
 
 export class Constants {
   public static WINDOW_WIDTH = 800
-  public static WINDOW_HEIGHT = 750
+  public static WINDOW_HEIGHT = 800
   public static GAME_WIDTH = 800
   public static GAME_HEIGHT = 640
   public static CELL_SIZE = 16
   public static OUTLINE_COLOR = 0x7df9ff
   public static ACTION_POINT_COLOR = 0x2ecc71
   public static ACTION_POINT_COST_COLOR = 0xd91e18
+  public static HP_BAR_COLOR = 0xc41e3a
+  public static MAGIC_ARMOR_COLOR = 0x0096ff
+  public static PHYSICAL_ARMOR_COLOR = 0xd3d3d3
+  public static END_TURN_BUTTON_COLOR = 0x227093
 
   public static DEFAULT_PLAYER_CONFIG = [
     {

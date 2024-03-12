@@ -7,8 +7,8 @@ export class ActionPointDisplay {
   private actionPointCircles: Phaser.GameObjects.Arc[] = []
   private bgRect: Phaser.GameObjects.Rectangle
 
-  private static ACTION_POINT_DISPLAY_WIDTH = 200
-  private static ACTION_POINT_DISPLAY_HEIGHT = 40
+  private static ACTION_POINT_DISPLAY_WIDTH = 150
+  private static ACTION_POINT_DISPLAY_HEIGHT = 30
   private static MAXIMUM_ACTION_POINTS = 5
 
   constructor(uiScene: UI) {
@@ -17,7 +17,7 @@ export class ActionPointDisplay {
     this.bgRect = this.uiScene.add
       .rectangle(
         Constants.WINDOW_WIDTH / 2,
-        Constants.GAME_HEIGHT - 5,
+        Constants.GAME_HEIGHT - 10,
         ActionPointDisplay.ACTION_POINT_DISPLAY_WIDTH,
         ActionPointDisplay.ACTION_POINT_DISPLAY_HEIGHT,
         0x333333
