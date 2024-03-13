@@ -1,4 +1,5 @@
 import Game from '../../scenes/Game'
+import { Side } from '../Constants'
 import { PartyMember, PartyMemberConfig } from './PartyMember'
 
 export interface PartyControllerConfig {
@@ -7,7 +8,7 @@ export interface PartyControllerConfig {
 
 export class PartyController {
   protected game: Game
-  protected partyMembers: { [key: string]: PartyMember } = {}
+  public partyMembers: { [key: string]: PartyMember } = {}
 
   constructor(game: Game, config: PartyControllerConfig) {
     this.game = game
@@ -15,9 +16,13 @@ export class PartyController {
   }
 
   setupPartyMembers(config: PartyControllerConfig) {
-    config.partyConfig.forEach((config: PartyMemberConfig) => {
-      this.partyMembers[config.id] = new PartyMember(this.game, config)
+    config.partyConfig.forEach((pmConfig: PartyMemberConfig) => {
+      this.partyMembers[pmConfig.id] = new PartyMember(this.game, { ...pmConfig })
     })
+  }
+
+  get allPartyMembers() {
+    return Object.values(this.partyMembers)
   }
 
   isSpaceOccupied(x: number, y: number): boolean {

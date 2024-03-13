@@ -5,15 +5,15 @@ import { Constants, Side } from '../core/Constants'
 import { Map } from '../core/map/Map'
 import { PartyMemberConfig } from '../core/controller/PartyMember'
 import { Player } from '../core/controller/Player'
-import { UI } from './UI'
 
 export default class Game extends Phaser.Scene {
   private static _instance: Game
   public map!: Map
   public player!: Player
   public cpu!: CPU
-  public currTurn: Side = Side.PLAYER
   public postFxPlugin: any
+  public turnOrder: string[] = []
+  public partyMemberToActIndex: number = 0
 
   constructor() {
     super('game')
@@ -24,6 +24,13 @@ export default class Game extends Phaser.Scene {
     return Game._instance
   }
 
+  generateTurnOrder() {
+    this.turnOrder = this.cpu.allPartyMembers
+      .concat(this.player.allPartyMembers)
+      .sort((a, b) => b.initiative - a.initiative)
+      .map((pm) => pm.id)
+  }
+
   isSpaceOccupied(x: number, y: number) {
     return this.cpu.isSpaceOccupied(x, y) || this.player.isSpaceOccupied(x, y)
   }
@@ -32,11 +39,9 @@ export default class Game extends Phaser.Scene {
     return Constants.DEFAULT_PLAYER_CONFIG.map((config) => {
       return {
         position: this.map.getWorldPositionForRowCol(config.rowColPos.row, config.rowColPos.col),
-        maxHealth: config.maxHealth,
-        actionPointPerTurn: config.actionPointPerTurn,
-        apCostPerSquareMoved: config.apCostPerSquareMoved,
-        texture: config.texture,
         id: Phaser.Utils.String.UUID(),
+        ...config,
+        side: Side.PLAYER,
       }
     })
   }
@@ -50,10 +55,8 @@ export default class Game extends Phaser.Scene {
         enemyConfigs.push({
           position: this.map.getWorldPositionForRowCol(tile.y, tile.x),
           id: Phaser.Utils.String.UUID(),
-          texture: randEnemyConfig.texture,
-          maxHealth: randEnemyConfig.maxHealth,
-          actionPointPerTurn: randEnemyConfig.actionPointPerTurn,
-          apCostPerSquareMoved: randEnemyConfig.apCostPerSquareMoved,
+          ...randEnemyConfig,
+          side: Side.CPU,
         })
       }
     })
@@ -72,9 +75,24 @@ export default class Game extends Phaser.Scene {
     this.cpu = new CPU(this, {
       partyConfig: this.loadCPUEnemyConfigs(),
     })
+    this.generateTurnOrder()
+  }
+
+  public get partyMemberToActId() {
+    return this.turnOrder[this.partyMemberToActIndex]
+  }
+
+  getPartyMember(partyMemberToActId: string) {
+    const partyMemberToAct =
+      this.cpu.partyMembers[partyMemberToActId] || this.player.partyMembers[partyMemberToActId]
+    return partyMemberToAct
   }
 
   onUIReady() {
-    this.player.startTurn()
+    const partyMemberToActId = this.turnOrder[this.partyMemberToActIndex]
+    const partyMemberToAct =
+      this.cpu.partyMembers[partyMemberToActId] || this.player.partyMembers[partyMemberToActId]
+
+    partyMemberToAct.startTurn()
   }
 }

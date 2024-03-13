@@ -2,16 +2,21 @@ import { Constants } from '../core/Constants'
 import { PlayerPartyMember } from '../core/controller/PlayerPartyMember'
 import { ActionPointDisplay } from '../core/ui/ActionPointDisplay'
 import { Button } from '../core/ui/Button'
+import { TurnOrderCard } from '../core/ui/TurnOrderCard'
 import { UIValueBar } from '../core/ui/UIValueBar'
 import Game from './Game'
 
 export class UI extends Phaser.Scene {
   public static BOTTOM_BAR_Y_POS = Constants.WINDOW_HEIGHT - Constants.GAME_HEIGHT
+  private static TURN_ORDER_CARD_WIDTH = 50
+  private static TURN_ORDER_CARD_HEIGHT = 75
+
   private static _instance: UI
   public actionPointDisplay!: ActionPointDisplay
   public healthBar!: UIValueBar
   public magicArmor!: UIValueBar
   public physicalArmor!: UIValueBar
+  public turnOrderCards!: TurnOrderCard[]
 
   public endTurnButton!: Button
 
@@ -81,6 +86,27 @@ export class UI extends Phaser.Scene {
     if (Game.instance) {
       Game.instance.onUIReady()
     }
+
+    const padding = 5
+    const turnOrder = Game.instance.turnOrder
+    const totalWidth =
+      UI.TURN_ORDER_CARD_WIDTH * turnOrder.length + (padding * turnOrder.length - 1)
+    let x =
+      Constants.WINDOW_WIDTH / 2 - totalWidth / 2 + (UI.TURN_ORDER_CARD_WIDTH / 2 + padding / 2)
+    turnOrder.forEach((partyMemberId) => {
+      const partyMember = Game.instance.getPartyMember(partyMemberId)
+      const turnOrderCard = new TurnOrderCard(this, {
+        position: {
+          x: x,
+          y: UI.TURN_ORDER_CARD_HEIGHT / 2 + 10,
+        },
+        texture: partyMember.sprite.texture.key,
+        width: UI.TURN_ORDER_CARD_WIDTH,
+        height: UI.TURN_ORDER_CARD_HEIGHT,
+      })
+      turnOrderCard.setVisible(true)
+      x += UI.TURN_ORDER_CARD_WIDTH + padding
+    })
   }
 
   selectPartyMember(partyMember: PlayerPartyMember) {

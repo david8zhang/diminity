@@ -23,7 +23,7 @@ export class PlayerPartyMember extends PartyMember {
     })
   }
 
-  select() {
+  startTurn() {
     if (Game.instance) {
       Game.instance.postFxPlugin.add(this.sprite, {
         thickness: 2,

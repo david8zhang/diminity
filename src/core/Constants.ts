@@ -1,6 +1,6 @@
 export enum Side {
-  PLAYER = 'PLAYER',
-  CPU = 'CPU',
+  CPU,
+  PLAYER,
 }
 
 export class Constants {
@@ -10,6 +10,7 @@ export class Constants {
   public static GAME_HEIGHT = 640
   public static CELL_SIZE = 16
   public static OUTLINE_COLOR = 0x7df9ff
+  public static CPU_OUTLINE_COLOR = 0xee4b2b
   public static ACTION_POINT_COLOR = 0x2ecc71
   public static ACTION_POINT_COST_COLOR = 0xd91e18
   public static HP_BAR_COLOR = 0xc41e3a
@@ -27,6 +28,7 @@ export class Constants {
       apCostPerSquareMoved: 0.5,
       texture: 'wizard',
       actionPointPerTurn: 4,
+      initiative: 2,
     },
     {
       rowColPos: {
@@ -37,6 +39,7 @@ export class Constants {
       texture: 'fighter',
       apCostPerSquareMoved: 0.5,
       actionPointPerTurn: 3,
+      initiative: 3,
     },
     {
       rowColPos: {
@@ -47,6 +50,7 @@ export class Constants {
       texture: 'rogue',
       apCostPerSquareMoved: 0.5,
       actionPointPerTurn: 4,
+      initiative: 4,
     },
   ]
 
@@ -57,6 +61,7 @@ export class Constants {
       maxHealth: 15,
       actionPointPerTurn: 3,
       apCostPerSquareMoved: 1,
+      initiative: 1,
     },
     {
       texture: 'spider',
@@ -64,6 +69,7 @@ export class Constants {
       maxHealth: 10,
       actionPointPerTurn: 3,
       apCostPerSquareMoved: 1,
+      initiative: 2,
     },
   ]
 }
