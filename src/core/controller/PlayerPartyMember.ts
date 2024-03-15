@@ -24,13 +24,7 @@ export class PlayerPartyMember extends PartyMember {
   }
 
   startTurn() {
-    if (Game.instance) {
-      Game.instance.postFxPlugin.add(this.sprite, {
-        thickness: 2,
-        outlineColor: Constants.OUTLINE_COLOR,
-      })
-    }
-
+    super.startTurn(Constants.OUTLINE_COLOR)
     if (UI.instance) {
       UI.instance.selectPartyMember(this)
     }
@@ -109,7 +103,7 @@ export class PlayerPartyMember extends PartyMember {
     const tileDistance = this.game.map.getTileDistance(this.sprite.x, this.sprite.y, worldX, worldY)
     const costForMove = Math.round(this.apCostPerSquareMoved * tileDistance)
 
-    if (tileDistance <= this.moveRange) {
+    if (tileDistance <= this.moveRange && costForMove <= this.currActionPoints) {
       UI.instance.actionPointDisplay.displayActionPotentialPointCost(this, costForMove)
       this.game.map.tintTile(worldX, worldY, 0x00ff00)
     }

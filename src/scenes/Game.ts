@@ -5,6 +5,7 @@ import { Constants, Side } from '../core/Constants'
 import { Map } from '../core/map/Map'
 import { PartyMemberConfig } from '../core/controller/PartyMember'
 import { Player } from '../core/controller/Player'
+import { UI } from './UI'
 
 export default class Game extends Phaser.Scene {
   private static _instance: Game
@@ -89,10 +90,26 @@ export default class Game extends Phaser.Scene {
   }
 
   onUIReady() {
+    this.startPartyMemberTurn()
+  }
+
+  startPartyMemberTurn() {
     const partyMemberToActId = this.turnOrder[this.partyMemberToActIndex]
     const partyMemberToAct =
       this.cpu.partyMembers[partyMemberToActId] || this.player.partyMembers[partyMemberToActId]
-
     partyMemberToAct.startTurn()
+    if (partyMemberToAct.side === Side.CPU) {
+      this.cpu.movePartyMember(partyMemberToActId)
+    }
+  }
+
+  endCurrPartyMemberTurn() {
+    const prevPartyMember = this.getPartyMember(this.partyMemberToActId)
+    prevPartyMember.dehighlight()
+    UI.instance.dehighlightPartyMemberCard(this.partyMemberToActId)
+
+    this.partyMemberToActIndex = (this.partyMemberToActIndex + 1) % this.turnOrder.length
+    UI.instance.highlightPartyMemberCard(this.turnOrder[this.partyMemberToActIndex])
+    this.startPartyMemberTurn()
   }
 }

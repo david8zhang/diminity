@@ -41,12 +41,19 @@ export class PartyMember {
     this.sprite = this.game.add.sprite(config.position.x, config.position.y, config.texture)
   }
 
-  startTurn() {
+  startTurn(outlineColor?: number) {
     if (Game.instance) {
       Game.instance.postFxPlugin.add(this.sprite, {
         thickness: 2,
-        outlineColor: Constants.CPU_OUTLINE_COLOR,
+        outlineColor: outlineColor ? outlineColor : Constants.CPU_OUTLINE_COLOR,
       })
+    }
+    this.currActionPoints = this.actionPointPerTurn
+  }
+
+  dehighlight() {
+    if (Game.instance) {
+      Game.instance.postFxPlugin.remove(this.sprite)
     }
   }
 }

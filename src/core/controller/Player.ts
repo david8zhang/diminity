@@ -4,8 +4,6 @@ import { PartyMemberConfig } from './PartyMember'
 import { ActionState, PlayerPartyMember } from './PlayerPartyMember'
 
 export class Player extends PartyController {
-  private selectedPartyMemberId: string = ''
-
   constructor(game: Game, config: PartyControllerConfig) {
     super(game, config)
     this.setupInputListener()

@@ -1,9 +1,9 @@
-import { Constants } from '../core/Constants'
+import { Constants, Side } from '../core/Constants'
 import { PlayerPartyMember } from '../core/controller/PlayerPartyMember'
 import { ActionPointDisplay } from '../core/ui/ActionPointDisplay'
 import { Button } from '../core/ui/Button'
+import { StatBars } from '../core/ui/StatBars'
 import { TurnOrderCard } from '../core/ui/TurnOrderCard'
-import { UIValueBar } from '../core/ui/UIValueBar'
 import Game from './Game'
 
 export class UI extends Phaser.Scene {
@@ -13,10 +13,8 @@ export class UI extends Phaser.Scene {
 
   private static _instance: UI
   public actionPointDisplay!: ActionPointDisplay
-  public healthBar!: UIValueBar
-  public magicArmor!: UIValueBar
-  public physicalArmor!: UIValueBar
-  public turnOrderCards!: TurnOrderCard[]
+  public statBars!: StatBars
+  public turnOrderCards: TurnOrderCard[] = []
 
   public endTurnButton!: Button
 
@@ -37,42 +35,17 @@ export class UI extends Phaser.Scene {
       .setFillStyle(0x000000)
       .setOrigin(0)
 
-    this.healthBar = new UIValueBar(this, {
-      width: 250,
-      height: 25,
-      x: Constants.WINDOW_WIDTH / 2 - 125,
-      y: Constants.GAME_HEIGHT + 50,
-      borderWidth: 0,
-      bgColor: 0x222222,
-      maxValue: 100,
-    })
-
-    this.magicArmor = new UIValueBar(this, {
-      width: 120,
-      height: 10,
-      x: Constants.WINDOW_WIDTH / 2 + 5,
-      y: Constants.GAME_HEIGHT + 30,
-      borderWidth: 0,
-      bgColor: 0x222222,
-      maxValue: 100,
-      fillColor: Constants.MAGIC_ARMOR_COLOR,
-    })
-
-    this.physicalArmor = new UIValueBar(this, {
-      width: 120,
-      height: 10,
-      x: Constants.WINDOW_WIDTH / 2 - 125,
-      y: Constants.GAME_HEIGHT + 30,
-      borderWidth: 0,
-      bgColor: 0x222222,
-      maxValue: 100,
-      fillColor: Constants.PHYSICAL_ARMOR_COLOR,
-    })
+    this.statBars = new StatBars(this)
 
     this.endTurnButton = new Button({
       x: Constants.WINDOW_WIDTH - 60,
       y: Constants.GAME_HEIGHT + 25,
-      onClick: () => {},
+      onClick: () => {
+        const currPartyMember = Game.instance.getPartyMember(Game.instance.partyMemberToActId)
+        if (currPartyMember.side == Side.PLAYER) {
+          Game.instance.endCurrPartyMemberTurn()
+        }
+      },
       text: 'End Turn',
       backgroundColor: Constants.END_TURN_BUTTON_COLOR,
       textColor: '#ffffff',
@@ -85,8 +58,12 @@ export class UI extends Phaser.Scene {
     this.actionPointDisplay = new ActionPointDisplay(this)
     if (Game.instance) {
       Game.instance.onUIReady()
+      this.createTurnOrderCards()
+      this.highlightPartyMemberCard(Game.instance.partyMemberToActId)
     }
+  }
 
+  createTurnOrderCards() {
     const padding = 5
     const turnOrder = Game.instance.turnOrder
     const totalWidth =
@@ -101,15 +78,36 @@ export class UI extends Phaser.Scene {
           y: UI.TURN_ORDER_CARD_HEIGHT / 2 + 10,
         },
         texture: partyMember.sprite.texture.key,
+        partyMemberId: partyMember.id,
         width: UI.TURN_ORDER_CARD_WIDTH,
         height: UI.TURN_ORDER_CARD_HEIGHT,
       })
       turnOrderCard.setVisible(true)
       x += UI.TURN_ORDER_CARD_WIDTH + padding
+      this.turnOrderCards.push(turnOrderCard)
     })
   }
 
   selectPartyMember(partyMember: PlayerPartyMember) {
     this.actionPointDisplay.showAvailableActionPoints(partyMember)
+    this.statBars.selectCurrPartyMember(partyMember)
+  }
+
+  dehighlightPartyMemberCard(partyMemberToActId: string) {
+    const turnOrderCardToDehighlight = this.turnOrderCards.find(
+      (toc) => toc.partyMemberId === partyMemberToActId
+    )
+    if (turnOrderCardToDehighlight) {
+      turnOrderCardToDehighlight.dehighlight()
+    }
+  }
+
+  highlightPartyMemberCard(partyMemberToActId: string) {
+    const turnOrderCardToHighlight = this.turnOrderCards.find(
+      (toc) => toc.partyMemberId === partyMemberToActId
+    )
+    if (turnOrderCardToHighlight) {
+      turnOrderCardToHighlight.highlight()
+    }
   }
 }
