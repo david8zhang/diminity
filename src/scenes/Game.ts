@@ -67,6 +67,7 @@ export default class Game extends Phaser.Scene {
   create() {
     // Shader plugin to outline sprites
     this.postFxPlugin = this.plugins.get('rexOutlinePipeline')
+    this.cameras.main.setZoom(1.5)
 
     new CameraManager(this)
     this.map = new Map(this)

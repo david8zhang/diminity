@@ -3,6 +3,7 @@ import { Player } from './Player'
 import { Constants } from '../Constants'
 import Game from '../../scenes/Game'
 import { UI } from '../../scenes/UI'
+import { Node } from '../map/Pathfinding'
 
 export enum ActionState {
   IDLE = 'IDLE',
@@ -42,11 +43,48 @@ export class PlayerPartyMember extends PartyMember {
     }
   }
 
+  moveAlongPath(pathIndex: number, path: Node[], onComplete: Function) {
+    if (pathIndex === path.length) {
+      onComplete()
+      return
+    }
+    const node = path[pathIndex]
+    const position = this.game.map.getWorldPositionForRowCol(node.position.row, node.position.col)
+    const distance = this.game.map.getTileDistance(
+      this.sprite.x,
+      this.sprite.y,
+      position.x,
+      position.y
+    )
+    this.game.tweens.add({
+      targets: [this.sprite],
+      x: {
+        from: this.sprite.x,
+        to: position.x,
+      },
+      y: {
+        from: this.sprite.y,
+        to: position.y,
+      },
+      duration: (distance / 5) * 500,
+      onComplete: () => {
+        this.moveAlongPath(pathIndex + 1, path, onComplete)
+      },
+    })
+  }
+
   moveToPosition(worldX: number, worldY: number) {
     const newPosition = this.game.map.getCenteredWorldPosition(worldX, worldY)
     if (!this.canMoveToPosition(newPosition.x, newPosition.y)) {
       return
     }
+
+    const path: Node[] = this.game.map.getShortestPathBetweenTwoPoints(
+      this.sprite.x,
+      this.sprite.y,
+      worldX,
+      worldY
+    )
 
     // Subtract action points
     const tileDistance = this.game.map.getTileDistance(this.sprite.x, this.sprite.y, worldX, worldY)
@@ -54,41 +92,12 @@ export class PlayerPartyMember extends PartyMember {
     this.currActionPoints -= apCostForMove
     UI.instance.actionPointDisplay.showAvailableActionPoints(this)
 
-    const distance = this.game.map.getTileDistance(
-      this.sprite.x,
-      this.sprite.y,
-      newPosition.x,
-      newPosition.y
-    )
-    this.game.tweens.add({
-      targets: [this.sprite],
-      x: {
-        from: this.sprite.x,
-        to: newPosition.x,
-      },
-      y: {
-        from: this.sprite.y,
-        to: newPosition.y,
-      },
-      duration: (distance / 5) * 500,
-      onStart: () => {
-        this.actionState = ActionState.MOVING
-        this.game.map.tintTile(newPosition.x, newPosition.y, 0x00ff00)
-      },
-      onComplete: () => {
-        this.goBackToIdle()
-        this.game.map.clearTint(newPosition.x, newPosition.y)
-      },
-    })
-  }
+    this.actionState = ActionState.MOVING
 
-  canMoveToPosition(x: number, y: number) {
-    const currPosition = this.game.map.getCenteredWorldPosition(this.sprite.x, this.sprite.y)
-    const tileDistance = this.game.map.getTileDistance(currPosition.x, currPosition.y, x, y)
-    const isAlreadyAtPosition = currPosition.x == x && currPosition.y == y
-    return (
-      !isAlreadyAtPosition && tileDistance <= this.moveRange && !this.game.isSpaceOccupied(x, y)
-    )
+    // Start moving along path
+    this.moveAlongPath(0, path, () => {
+      this.goBackToIdle()
+    })
   }
 
   goBackToIdle() {
@@ -112,42 +121,5 @@ export class PlayerPartyMember extends PartyMember {
   highlightMoveableSquares() {
     const moveableSquarePositions = this.getMoveableSquares()
     this.game.map.highlightTiles(moveableSquarePositions)
-  }
-
-  get moveRange() {
-    return this.currActionPoints / this.apCostPerSquareMoved
-  }
-
-  getMoveableSquares(): { row: number; col: number }[] {
-    const { row, col } = this.game.map.getRowColForWorldPosition(this.sprite.x, this.sprite.y)
-    const queue = [{ row, col }]
-    const seen = new Set<string>()
-    const directions = [
-      [0, 1],
-      [0, -1],
-      [1, 0],
-      [-1, 0],
-    ]
-    const moveableSquares: { row: number; col: number }[] = []
-    let distance = 0
-    while (queue.length > 0 && distance <= this.moveRange) {
-      const queueSize = queue.length
-      for (let i = 0; i < queueSize; i++) {
-        const cell = queue.shift()
-        if (cell) {
-          moveableSquares.push(cell)
-          directions.forEach((dir) => {
-            const newRow = dir[0] + cell.row
-            const newCol = dir[1] + cell.col
-            if (!seen.has(`${newRow},${newCol}`) && this.game.map.isRowColWithinBounds(row, col)) {
-              seen.add(`${newRow},${newCol}`)
-              queue.push({ row: newRow, col: newCol })
-            }
-          })
-        }
-      }
-      distance++
-    }
-    return moveableSquares
   }
 }

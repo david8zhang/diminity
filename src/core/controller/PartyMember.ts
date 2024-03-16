@@ -42,6 +42,8 @@ export class PartyMember {
   }
 
   startTurn(outlineColor?: number) {
+    this.game.cameras.main.pan(this.sprite.x, this.sprite.y, 500, Phaser.Math.Easing.Sine.InOut)
+    // this.game.cameras.main.centerOn(this.sprite.x, this.sprite.y)
     if (Game.instance) {
       Game.instance.postFxPlugin.add(this.sprite, {
         thickness: 2,
@@ -55,5 +57,51 @@ export class PartyMember {
     if (Game.instance) {
       Game.instance.postFxPlugin.remove(this.sprite)
     }
+  }
+
+  get moveRange() {
+    return this.currActionPoints / this.apCostPerSquareMoved
+  }
+
+  getMoveableSquares(): { row: number; col: number }[] {
+    const { row, col } = this.game.map.getRowColForWorldPosition(this.sprite.x, this.sprite.y)
+    const queue = [{ row, col }]
+    const seen = new Set<string>()
+    const directions = [
+      [0, 1],
+      [0, -1],
+      [1, 0],
+      [-1, 0],
+    ]
+    const moveableSquares: { row: number; col: number }[] = []
+    let distance = 0
+    while (queue.length > 0 && distance <= this.moveRange) {
+      const queueSize = queue.length
+      for (let i = 0; i < queueSize; i++) {
+        const cell = queue.shift()
+        if (cell) {
+          moveableSquares.push(cell)
+          directions.forEach((dir) => {
+            const newRow = dir[0] + cell.row
+            const newCol = dir[1] + cell.col
+            if (!seen.has(`${newRow},${newCol}`) && this.game.map.isRowColWithinBounds(row, col)) {
+              seen.add(`${newRow},${newCol}`)
+              queue.push({ row: newRow, col: newCol })
+            }
+          })
+        }
+      }
+      distance++
+    }
+    return moveableSquares
+  }
+
+  canMoveToPosition(x: number, y: number) {
+    const currPosition = this.game.map.getCenteredWorldPosition(this.sprite.x, this.sprite.y)
+    const tileDistance = this.game.map.getTileDistance(currPosition.x, currPosition.y, x, y)
+    const isAlreadyAtPosition = currPosition.x == x && currPosition.y == y
+    return (
+      !isAlreadyAtPosition && tileDistance <= this.moveRange && !this.game.isSpaceOccupied(x, y)
+    )
   }
 }

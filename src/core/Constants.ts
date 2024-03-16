@@ -10,7 +10,7 @@ export class Constants {
   public static GAME_HEIGHT = 640
   public static CELL_SIZE = 16
   public static OUTLINE_COLOR = 0x7df9ff
-  public static CPU_OUTLINE_COLOR = 0xee4b2b
+  public static CPU_OUTLINE_COLOR = 0xf6e58d
   public static ACTION_POINT_COLOR = 0x2ecc71
   public static ACTION_POINT_COST_COLOR = 0xd91e18
   public static HP_BAR_COLOR = 0xc41e3a

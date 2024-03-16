@@ -1,10 +1,12 @@
 import { Constants } from '../Constants'
 import { Grid } from './Grid'
+import { Pathfinding } from './Pathfinding'
 
 export class Map {
   private scene: Phaser.Scene
   private tilemap!: Phaser.Tilemaps.Tilemap
   private grid!: Grid
+  private pathfinding: Pathfinding
   public enemyLayer!: Phaser.Tilemaps.TilemapLayer
 
   constructor(scene: Phaser.Scene) {
@@ -14,6 +16,11 @@ export class Map {
       width: Constants.GAME_WIDTH,
       height: Constants.GAME_HEIGHT,
       cellSize: Constants.CELL_SIZE,
+    })
+    this.pathfinding = new Pathfinding({
+      tilemap: this.tilemap,
+      groundLayerName: 'Ground',
+      unwalkableTiles: [-1],
     })
   }
 
@@ -33,6 +40,12 @@ export class Map {
       x: cell.centerX,
       y: cell.centerY,
     }
+  }
+
+  getShortestPathBetweenTwoPoints(x1: number, y1: number, x2: number, y2: number) {
+    const startRowCol = this.getRowColForWorldPosition(x1, y1)
+    const endRowCol = this.getRowColForWorldPosition(x2, y2)
+    return this.pathfinding.getPath(startRowCol, endRowCol)
   }
 
   getTileDistance(x1: number, y1: number, x2: number, y2: number) {
@@ -58,6 +71,14 @@ export class Map {
       this.scene.cameras.main,
       'Ground'
     )
+    if (tile) {
+      tile.setAlpha(1)
+      tile.tint = tint
+    }
+  }
+
+  tintTileRowCol(row: number, col: number, tint: number) {
+    const tile = this.tilemap.getTileAt(col, row, false, 'Ground')
     if (tile) {
       tile.setAlpha(1)
       tile.tint = tint
