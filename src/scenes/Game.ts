@@ -3,7 +3,7 @@ import { CPU } from '../core/controller/CPU'
 import { CameraManager } from '../core/CameraManager'
 import { Constants, Side } from '../core/Constants'
 import { Map } from '../core/map/Map'
-import { PartyMemberConfig } from '../core/controller/PartyMember'
+import { PartyMember, PartyMemberConfig } from '../core/controller/PartyMember'
 import { Player } from '../core/controller/Player'
 import { UI } from './UI'
 
@@ -78,6 +78,10 @@ export default class Game extends Phaser.Scene {
       partyConfig: this.loadCPUEnemyConfigs(),
     })
     this.generateTurnOrder()
+
+    // center on first party member to act
+    const partyMemberToAct = this.getPartyMember(this.turnOrder[this.partyMemberToActIndex])
+    this.cameras.main.centerOn(partyMemberToAct.sprite.x, partyMemberToAct.sprite.y)
   }
 
   public get partyMemberToActId() {
@@ -91,26 +95,36 @@ export default class Game extends Phaser.Scene {
   }
 
   onUIReady() {
-    this.startPartyMemberTurn()
-  }
-
-  startPartyMemberTurn() {
     const partyMemberToActId = this.turnOrder[this.partyMemberToActIndex]
     const partyMemberToAct =
       this.cpu.partyMembers[partyMemberToActId] || this.player.partyMembers[partyMemberToActId]
-    partyMemberToAct.startTurn()
-    if (partyMemberToAct.side === Side.CPU) {
-      this.cpu.movePartyMember(partyMemberToActId)
-    }
+    this.startPartyMemberTurn(partyMemberToAct)
+  }
+
+  startPartyMemberTurn(partyMemberToAct: PartyMember) {
+    this.cameras.main.pan(
+      partyMemberToAct.sprite.x,
+      partyMemberToAct.sprite.y,
+      500,
+      Phaser.Math.Easing.Sine.InOut
+    )
+    this.time.delayedCall(500, () => {
+      partyMemberToAct.startTurn()
+      if (partyMemberToAct.side === Side.CPU) {
+        this.cpu.movePartyMember(partyMemberToAct.id)
+      }
+    })
   }
 
   endCurrPartyMemberTurn() {
     const prevPartyMember = this.getPartyMember(this.partyMemberToActId)
     prevPartyMember.dehighlight()
     UI.instance.dehighlightPartyMemberCard(this.partyMemberToActId)
-
     this.partyMemberToActIndex = (this.partyMemberToActIndex + 1) % this.turnOrder.length
     UI.instance.highlightPartyMemberCard(this.turnOrder[this.partyMemberToActIndex])
-    this.startPartyMemberTurn()
+    const partyMemberToActId = this.turnOrder[this.partyMemberToActIndex]
+    const partyMemberToAct =
+      this.cpu.partyMembers[partyMemberToActId] || this.player.partyMembers[partyMemberToActId]
+    this.startPartyMemberTurn(partyMemberToAct)
   }
 }

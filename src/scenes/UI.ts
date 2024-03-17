@@ -43,7 +43,7 @@ export class UI extends Phaser.Scene {
       onClick: () => {
         const currPartyMember = Game.instance.getPartyMember(Game.instance.partyMemberToActId)
         if (currPartyMember.side == Side.PLAYER) {
-          Game.instance.endCurrPartyMemberTurn()
+          Game.instance.player.endTurn()
         }
       },
       text: 'End Turn',

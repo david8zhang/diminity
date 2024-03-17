@@ -1,5 +1,6 @@
 import Game from '../../scenes/Game'
 import { Constants, Side } from '../Constants'
+import { Node } from '../map/Pathfinding'
 
 export interface PartyMemberConfig {
   id: string
@@ -42,8 +43,6 @@ export class PartyMember {
   }
 
   startTurn(outlineColor?: number) {
-    this.game.cameras.main.pan(this.sprite.x, this.sprite.y, 500, Phaser.Math.Easing.Sine.InOut)
-    // this.game.cameras.main.centerOn(this.sprite.x, this.sprite.y)
     if (Game.instance) {
       Game.instance.postFxPlugin.add(this.sprite, {
         thickness: 2,
@@ -84,7 +83,11 @@ export class PartyMember {
           directions.forEach((dir) => {
             const newRow = dir[0] + cell.row
             const newCol = dir[1] + cell.col
-            if (!seen.has(`${newRow},${newCol}`) && this.game.map.isRowColWithinBounds(row, col)) {
+            if (
+              !seen.has(`${newRow},${newCol}`) &&
+              this.game.map.isRowColWithinBounds(newRow, newCol) &&
+              this.game.map.isValidGroundTile(newRow, newCol)
+            ) {
               seen.add(`${newRow},${newCol}`)
               queue.push({ row: newRow, col: newCol })
             }
@@ -93,7 +96,10 @@ export class PartyMember {
       }
       distance++
     }
-    return moveableSquares
+    return moveableSquares.filter((ms) => {
+      const { x, y } = this.game.map.getWorldPositionForRowCol(ms.row, ms.col)
+      return this.canMoveToPosition(x, y)
+    })
   }
 
   canMoveToPosition(x: number, y: number) {
@@ -103,5 +109,56 @@ export class PartyMember {
     return (
       !isAlreadyAtPosition && tileDistance <= this.moveRange && !this.game.isSpaceOccupied(x, y)
     )
+  }
+
+  subtractActionPoints(apCostForMove: number) {
+    this.currActionPoints -= apCostForMove
+  }
+
+  moveAlongPath(pathIndex: number, path: Node[], onComplete: Function) {
+    if (pathIndex === path.length) {
+      onComplete()
+      return
+    }
+    const node = path[pathIndex]
+    const position = this.game.map.getWorldPositionForRowCol(node.position.row, node.position.col)
+    const distance = this.game.map.getTileDistance(
+      this.sprite.x,
+      this.sprite.y,
+      position.x,
+      position.y
+    )
+    this.game.tweens.add({
+      targets: [this.sprite],
+      x: {
+        from: this.sprite.x,
+        to: position.x,
+      },
+      y: {
+        from: this.sprite.y,
+        to: position.y,
+      },
+      duration: (distance / 5) * 500,
+      onComplete: () => {
+        this.moveAlongPath(pathIndex + 1, path, onComplete)
+      },
+    })
+  }
+
+  moveToPosition(worldX: number, worldY: number, onMoveComplete: Function) {
+    const path: Node[] = this.game.map.getShortestPathBetweenTwoPoints(
+      this.sprite.x,
+      this.sprite.y,
+      worldX,
+      worldY
+    )
+
+    // Subtract action points
+    const tileDistance = this.game.map.getTileDistance(this.sprite.x, this.sprite.y, worldX, worldY)
+    const apCostForMove = Math.round(this.apCostPerSquareMoved * tileDistance)
+    this.subtractActionPoints(apCostForMove)
+
+    // Start moving along path
+    this.moveAlongPath(0, path, onMoveComplete)
   }
 }

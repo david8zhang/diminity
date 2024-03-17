@@ -20,7 +20,12 @@ export class Player extends PartyController {
       if (this.selectedPartyMember) {
         switch (this.selectedPartyMember.actionState) {
           case ActionState.SELECTING_MOVE_DEST: {
-            this.selectedPartyMember.showActionPointCostForMove(pointer.worldX, pointer.worldY)
+            if (
+              this.game.map.isWorldXYWithinBounds(pointer.worldX, pointer.worldY) &&
+              this.selectedPartyMember.canMoveToPosition(pointer.worldX, pointer.worldY)
+            ) {
+              this.selectedPartyMember.showActionPointCostForMove(pointer.worldX, pointer.worldY)
+            }
             break
           }
         }
@@ -32,7 +37,9 @@ export class Player extends PartyController {
         switch (this.selectedPartyMember.actionState) {
           case ActionState.SELECTING_MOVE_DEST: {
             const { worldX, worldY } = pointer
-            this.selectedPartyMember.moveToPosition(worldX, worldY)
+            if (this.selectedPartyMember.canMoveToPosition(worldX, worldY)) {
+              this.selectedPartyMember.moveToPosition(worldX, worldY)
+            }
           }
         }
       }
@@ -68,6 +75,14 @@ export class Player extends PartyController {
   handlePartyMemberClick(partyMemberId: string) {
     if (this.game.partyMemberToActId == partyMemberId && this.selectedPartyMember) {
       this.selectedPartyMember.beginMoveOrder()
+    }
+  }
+
+  endTurn() {
+    if (this.selectedPartyMember) {
+      this.game.map.clearAllTint(this.selectedPartyMember.getMoveableSquares())
+      this.game.map.dehighlightTiles()
+      this.game.endCurrPartyMemberTurn()
     }
   }
 }

@@ -43,65 +43,21 @@ export class PlayerPartyMember extends PartyMember {
     }
   }
 
-  moveAlongPath(pathIndex: number, path: Node[], onComplete: Function) {
-    if (pathIndex === path.length) {
-      onComplete()
-      return
-    }
-    const node = path[pathIndex]
-    const position = this.game.map.getWorldPositionForRowCol(node.position.row, node.position.col)
-    const distance = this.game.map.getTileDistance(
-      this.sprite.x,
-      this.sprite.y,
-      position.x,
-      position.y
-    )
-    this.game.tweens.add({
-      targets: [this.sprite],
-      x: {
-        from: this.sprite.x,
-        to: position.x,
-      },
-      y: {
-        from: this.sprite.y,
-        to: position.y,
-      },
-      duration: (distance / 5) * 500,
-      onComplete: () => {
-        this.moveAlongPath(pathIndex + 1, path, onComplete)
-      },
-    })
+  subtractActionPoints(apCost: number) {
+    super.subtractActionPoints(apCost)
+    UI.instance.actionPointDisplay.showAvailableActionPoints(this)
   }
 
   moveToPosition(worldX: number, worldY: number) {
-    const newPosition = this.game.map.getCenteredWorldPosition(worldX, worldY)
-    if (!this.canMoveToPosition(newPosition.x, newPosition.y)) {
-      return
-    }
-
-    const path: Node[] = this.game.map.getShortestPathBetweenTwoPoints(
-      this.sprite.x,
-      this.sprite.y,
-      worldX,
-      worldY
-    )
-
-    // Subtract action points
-    const tileDistance = this.game.map.getTileDistance(this.sprite.x, this.sprite.y, worldX, worldY)
-    const apCostForMove = Math.round(this.apCostPerSquareMoved * tileDistance)
-    this.currActionPoints -= apCostForMove
-    UI.instance.actionPointDisplay.showAvailableActionPoints(this)
-
     this.actionState = ActionState.MOVING
-
-    // Start moving along path
-    this.moveAlongPath(0, path, () => {
+    super.moveToPosition(worldX, worldY, () => {
       this.goBackToIdle()
     })
   }
 
   goBackToIdle() {
     this.actionState = ActionState.IDLE
+    this.game.map.clearTint(this.sprite.x, this.sprite.y)
     this.game.map.clearAllTint(this.getMoveableSquares())
     this.game.map.dehighlightTiles()
     UI.instance.actionPointDisplay.showAvailableActionPoints(this)

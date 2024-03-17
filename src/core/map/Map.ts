@@ -123,6 +123,17 @@ export class Map {
     return this.grid.withinBounds(row, col)
   }
 
+  isValidGroundTile(row: number, col: number) {
+    const tile = this.tilemap.getTileAt(col, row, false, 'Ground')
+    return tile !== null
+  }
+
+  isWorldXYWithinBounds(worldX: number, worldY: number) {
+    return (
+      worldX >= 0 && worldX < Constants.GAME_WIDTH && worldY >= 0 && worldY <= Constants.GAME_HEIGHT
+    )
+  }
+
   initTilemap() {
     this.tilemap = this.scene.make.tilemap({
       key: 'map-1',

@@ -26,9 +26,12 @@ export class PartyController {
   }
 
   isSpaceOccupied(x: number, y: number): boolean {
+    const rowCol = this.game.map.getRowColForWorldPosition(x, y)
+
     return (
       Object.values(this.partyMembers).find((pm) => {
-        return pm.sprite.x == x && pm.sprite.y == y
+        const { row, col } = this.game.map.getRowColForWorldPosition(pm.sprite.x, pm.sprite.y)
+        return row == rowCol.row && col == rowCol.col
       }) != undefined
     )
   }
