@@ -20,10 +20,7 @@ export class Player extends PartyController {
       if (this.selectedPartyMember) {
         switch (this.selectedPartyMember.actionState) {
           case ActionState.SELECTING_MOVE_DEST: {
-            if (
-              this.game.map.isWorldXYWithinBounds(pointer.worldX, pointer.worldY) &&
-              this.selectedPartyMember.canMoveToPosition(pointer.worldX, pointer.worldY)
-            ) {
+            if (this.selectedPartyMember.canMoveToPosition(pointer.worldX, pointer.worldY)) {
               this.selectedPartyMember.showActionPointCostForMove(pointer.worldX, pointer.worldY)
             }
             break

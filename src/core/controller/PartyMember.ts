@@ -103,6 +103,11 @@ export class PartyMember {
   }
 
   canMoveToPosition(x: number, y: number) {
+    const isWithinBounds = this.game.map.isWorldXYWithinBounds(x, y)
+    if (!isWithinBounds) {
+      return false
+    }
+
     const currPosition = this.game.map.getCenteredWorldPosition(this.sprite.x, this.sprite.y)
     const tileDistance = this.game.map.getTileDistance(currPosition.x, currPosition.y, x, y)
     const isAlreadyAtPosition = currPosition.x == x && currPosition.y == y
