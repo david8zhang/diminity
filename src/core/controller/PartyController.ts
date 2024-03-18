@@ -1,5 +1,4 @@
 import Game from '../../scenes/Game'
-import { Side } from '../Constants'
 import { PartyMember, PartyMemberConfig } from './PartyMember'
 
 export interface PartyControllerConfig {
@@ -23,6 +22,15 @@ export class PartyController {
 
   get allPartyMembers() {
     return Object.values(this.partyMembers)
+  }
+
+  getPartyMemberAtPosition(worldX: number, worldY: number): PartyMember | null {
+    const worldRowCol = this.game.map.getRowColForWorldPosition(worldX, worldY)
+    const pmAtPosition = this.allPartyMembers.find((pm) => {
+      const rowCol = this.game.map.getRowColForWorldPosition(pm.sprite.x, pm.sprite.y)
+      return worldRowCol.row == rowCol.row && worldRowCol.col == rowCol.col
+    })
+    return pmAtPosition ? pmAtPosition : null
   }
 
   isSpaceOccupied(x: number, y: number): boolean {

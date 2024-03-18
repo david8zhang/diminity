@@ -16,6 +16,9 @@ export class Preload extends Phaser.Scene {
     // Enemies
     this.load.image('spider', 'enemies/spider.png')
     this.load.image('rat', 'enemies/rat.png')
+
+    // Icons
+    this.load.image('sword-icon', 'icons/sword.png')
   }
 
   create() {

@@ -1,13 +1,17 @@
 import { Constants, Side } from '../core/Constants'
 import { PlayerPartyMember } from '../core/controller/PlayerPartyMember'
+import { ActionMenu } from '../core/ui/ActionMenu'
 import { ActionPointDisplay } from '../core/ui/ActionPointDisplay'
 import { Button } from '../core/ui/Button'
+import { ProfileImage } from '../core/ui/ProfileImage'
 import { StatBars } from '../core/ui/StatBars'
 import { TurnOrderCard } from '../core/ui/TurnOrderCard'
 import Game from './Game'
 
 export class UI extends Phaser.Scene {
   public static BOTTOM_BAR_Y_POS = Constants.WINDOW_HEIGHT - Constants.GAME_HEIGHT
+  public static ICON_BOX_SIZE = 60
+  public static ICON_BOX_BG_COLOR = 0x444444
   private static TURN_ORDER_CARD_WIDTH = 50
   private static TURN_ORDER_CARD_HEIGHT = 75
 
@@ -15,6 +19,8 @@ export class UI extends Phaser.Scene {
   public actionPointDisplay!: ActionPointDisplay
   public statBars!: StatBars
   public turnOrderCards: TurnOrderCard[] = []
+  public profileImage!: ProfileImage
+  public actionMenu!: ActionMenu
 
   public endTurnButton!: Button
 
@@ -36,6 +42,8 @@ export class UI extends Phaser.Scene {
       .setOrigin(0)
 
     this.statBars = new StatBars(this)
+    this.profileImage = new ProfileImage(this)
+    this.actionMenu = new ActionMenu(this)
 
     this.endTurnButton = new Button({
       x: Constants.WINDOW_WIDTH - 60,
@@ -91,6 +99,8 @@ export class UI extends Phaser.Scene {
   selectPartyMember(partyMember: PlayerPartyMember) {
     this.actionPointDisplay.showAvailableActionPoints(partyMember)
     this.statBars.selectCurrPartyMember(partyMember)
+    this.profileImage.displayProfileImage(partyMember)
+    this.actionMenu.displayActionsForPartyMember(partyMember)
   }
 
   dehighlightPartyMemberCard(partyMemberToActId: string) {

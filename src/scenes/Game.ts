@@ -127,4 +127,10 @@ export default class Game extends Phaser.Scene {
       this.cpu.partyMembers[partyMemberToActId] || this.player.partyMembers[partyMemberToActId]
     this.startPartyMemberTurn(partyMemberToAct)
   }
+
+  getPartyMemberAtPosition(worldX: number, worldY: number) {
+    const cpuPmAtPosition = this.cpu.getPartyMemberAtPosition(worldX, worldY)
+    const playerPmAtPosition = this.player.getPartyMemberAtPosition(worldX, worldY)
+    return cpuPmAtPosition || playerPmAtPosition
+  }
 }

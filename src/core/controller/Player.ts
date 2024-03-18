@@ -29,14 +29,15 @@ export class Player extends PartyController {
       }
     })
 
-    this.game.input.on(Phaser.Input.Events.POINTER_DOWN, (pointer: Phaser.Input.Pointer) => {
+    this.game.input.on(Phaser.Input.Events.POINTER_UP, (pointer: Phaser.Input.Pointer) => {
       if (this.selectedPartyMember) {
+        const { worldX, worldY } = pointer
         switch (this.selectedPartyMember.actionState) {
           case ActionState.SELECTING_MOVE_DEST: {
-            const { worldX, worldY } = pointer
             if (this.selectedPartyMember.canMoveToPosition(worldX, worldY)) {
               this.selectedPartyMember.moveToPosition(worldX, worldY)
             }
+            break
           }
         }
       }
@@ -77,8 +78,7 @@ export class Player extends PartyController {
 
   endTurn() {
     if (this.selectedPartyMember) {
-      this.game.map.clearAllTint(this.selectedPartyMember.getMoveableSquares())
-      this.game.map.dehighlightTiles()
+      this.selectedPartyMember.goBackToIdle()
       this.game.endCurrPartyMemberTurn()
     }
   }

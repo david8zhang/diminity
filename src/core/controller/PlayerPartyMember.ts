@@ -3,18 +3,21 @@ import { Player } from './Player'
 import { Constants } from '../Constants'
 import Game from '../../scenes/Game'
 import { UI } from '../../scenes/UI'
-import { Node } from '../map/Pathfinding'
+import { ActionNames } from '../actions/ActionNames'
+import { ActionCreator } from '../actions/ActionCreator'
+import { Action } from '../actions/Action'
 
 export enum ActionState {
   IDLE = 'IDLE',
   SELECTING_MOVE_DEST = 'SELECTING_MOVE_DEST',
   MOVING = 'MOVING',
-  ATTACKING = 'ATTACKING',
+  PERFORMING_ACTION = 'PERFORMING_ACTION',
 }
 
 export class PlayerPartyMember extends PartyMember {
   private player: Player
   public actionState: ActionState = ActionState.IDLE
+  public selectedAction: Action | null = null
 
   constructor(game: Game, player: Player, config: PartyMemberConfig) {
     super(game, config)
@@ -60,6 +63,8 @@ export class PlayerPartyMember extends PartyMember {
     this.game.map.clearTint(this.sprite.x, this.sprite.y)
     this.game.map.clearAllTint(this.getMoveableSquares())
     this.game.map.dehighlightTiles()
+    this.selectedAction = null
+    UI.instance.actionMenu.highlightSelectedAction('')
     UI.instance.actionPointDisplay.showAvailableActionPoints(this)
   }
 
@@ -77,5 +82,13 @@ export class PlayerPartyMember extends PartyMember {
   highlightMoveableSquares() {
     const moveableSquarePositions = this.getMoveableSquares()
     this.game.map.highlightTiles(moveableSquarePositions)
+  }
+
+  onActionClick(actionName: ActionNames) {
+    if (this.actions[actionName]) {
+      this.actionState = ActionState.PERFORMING_ACTION
+      this.selectedAction = this.actions[actionName]!
+      UI.instance.actionMenu.highlightSelectedAction(actionName)
+    }
   }
 }

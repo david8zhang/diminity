@@ -1,5 +1,8 @@
 import Game from '../../scenes/Game'
 import { Constants, Side } from '../Constants'
+import { Action } from '../actions/Action'
+import { ActionCreator } from '../actions/ActionCreator'
+import { ActionNames } from '../actions/ActionNames'
 import { Node } from '../map/Pathfinding'
 
 export interface PartyMemberConfig {
@@ -14,6 +17,7 @@ export interface PartyMemberConfig {
   apCostPerSquareMoved: number
   initiative: number
   side: Side
+  actionNames?: ActionNames[]
 }
 
 export class PartyMember {
@@ -28,6 +32,7 @@ export class PartyMember {
   public apCostPerSquareMoved: number = 0
   public initiative: number = 0
   public side: Side
+  public actions: { [key in ActionNames]?: Action }
 
   constructor(game: Game, config: PartyMemberConfig) {
     this.game = game
@@ -40,6 +45,11 @@ export class PartyMember {
     this.side = config.side
     this.currActionPoints = this.actionPointPerTurn
     this.sprite = this.game.add.sprite(config.position.x, config.position.y, config.texture)
+    let allActions = [ActionNames.BASIC_ATTACK]
+    if (config.actionNames) {
+      allActions = allActions.concat(config.actionNames)
+    }
+    this.actions = ActionCreator.createActionMap(allActions, this)
   }
 
   startTurn(outlineColor?: number) {
