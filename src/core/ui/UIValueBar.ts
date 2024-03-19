@@ -33,6 +33,7 @@ export class UIValueBar {
 
   constructor(scene: Phaser.Scene, config: UIValueBarConfig) {
     this.bar = new Phaser.GameObjects.Graphics(scene)
+    this.bar.setDepth(1000)
     const { x, y, maxValue, width, height, showBorder, borderWidth, bgColor, fillColor } = config
     this.x = x
     this.y = y

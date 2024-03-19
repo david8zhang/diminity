@@ -85,9 +85,11 @@ export class PlayerPartyMember extends PartyMember {
   }
 
   onActionClick(actionName: ActionNames) {
-    if (this.actions[actionName]) {
+    const clickedAction = this.actions[actionName]
+    if (clickedAction && clickedAction.apCost <= this.currActionPoints) {
       this.actionState = ActionState.PERFORMING_ACTION
       this.selectedAction = this.actions[actionName]!
+      this.selectedAction.onSelected()
       UI.instance.actionMenu.highlightSelectedAction(actionName)
     }
   }

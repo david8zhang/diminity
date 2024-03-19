@@ -13,11 +13,14 @@ export interface PartyMemberConfig {
   }
   texture: string
   maxHealth: number
+  side: Side
+  actionNames?: ActionNames[]
+
+  // Stats
   actionPointPerTurn: number
   apCostPerSquareMoved: number
   initiative: number
-  side: Side
-  actionNames?: ActionNames[]
+  strength: number
 }
 
 export class PartyMember {
@@ -31,6 +34,7 @@ export class PartyMember {
   public currActionPoints: number = 0
   public apCostPerSquareMoved: number = 0
   public initiative: number = 0
+  public strength: number = 0
   public side: Side
   public actions: { [key in ActionNames]?: Action }
 
@@ -45,6 +49,7 @@ export class PartyMember {
     this.side = config.side
     this.currActionPoints = this.actionPointPerTurn
     this.sprite = this.game.add.sprite(config.position.x, config.position.y, config.texture)
+    this.strength = config.strength
     let allActions = [ActionNames.BASIC_ATTACK]
     if (config.actionNames) {
       allActions = allActions.concat(config.actionNames)
@@ -70,6 +75,10 @@ export class PartyMember {
 
   get moveRange() {
     return this.currActionPoints / this.apCostPerSquareMoved
+  }
+
+  decreaseHealth(damage: number) {
+    this.currHealth = Math.max(0, this.currHealth - damage)
   }
 
   getMoveableSquares(): { row: number; col: number }[] {

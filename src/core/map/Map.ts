@@ -85,6 +85,12 @@ export class Map {
     }
   }
 
+  tintTiles(tiles: { row: number; col: number }[], tint: number) {
+    tiles.forEach((tile) => {
+      this.tintTileRowCol(tile.row, tile.col, tint)
+    })
+  }
+
   clearAllTint(tilePositions: { row: number; col: number }[]) {
     tilePositions.forEach((pos) => {
       const tile = this.tilemap.getTileAt(pos.col, pos.row, false, 'Ground')

@@ -3,6 +3,7 @@ import { PlayerPartyMember } from '../core/controller/PlayerPartyMember'
 import { ActionMenu } from '../core/ui/ActionMenu'
 import { ActionPointDisplay } from '../core/ui/ActionPointDisplay'
 import { Button } from '../core/ui/Button'
+import { FloatingStatBars } from '../core/ui/FloatingStatBars'
 import { ProfileImage } from '../core/ui/ProfileImage'
 import { StatBars } from '../core/ui/StatBars'
 import { TurnOrderCard } from '../core/ui/TurnOrderCard'
@@ -18,6 +19,7 @@ export class UI extends Phaser.Scene {
   private static _instance: UI
   public actionPointDisplay!: ActionPointDisplay
   public statBars!: StatBars
+  public floatingStatBars!: FloatingStatBars
   public turnOrderCards: TurnOrderCard[] = []
   public profileImage!: ProfileImage
   public actionMenu!: ActionMenu
@@ -44,6 +46,8 @@ export class UI extends Phaser.Scene {
     this.statBars = new StatBars(this)
     this.profileImage = new ProfileImage(this)
     this.actionMenu = new ActionMenu(this)
+
+    this.floatingStatBars = new FloatingStatBars(this)
 
     this.endTurnButton = new Button({
       x: Constants.WINDOW_WIDTH - 60,

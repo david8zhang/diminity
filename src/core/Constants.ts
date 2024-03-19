@@ -28,6 +28,7 @@ export class Constants {
       apCostPerSquareMoved: 0.5,
       texture: 'wizard',
       actionPointPerTurn: 4,
+      strength: 2,
       initiative: 2,
     },
     {
@@ -39,6 +40,7 @@ export class Constants {
       texture: 'fighter',
       apCostPerSquareMoved: 0.5,
       actionPointPerTurn: 3,
+      strength: 4,
       initiative: 3,
     },
     {
@@ -50,6 +52,7 @@ export class Constants {
       texture: 'rogue',
       apCostPerSquareMoved: 0.5,
       actionPointPerTurn: 4,
+      strength: 3,
       initiative: 4,
     },
   ]
@@ -61,6 +64,7 @@ export class Constants {
       maxHealth: 15,
       actionPointPerTurn: 3,
       apCostPerSquareMoved: 1,
+      strength: 3,
       initiative: 1,
     },
     {
@@ -69,6 +73,7 @@ export class Constants {
       maxHealth: 10,
       actionPointPerTurn: 3,
       apCostPerSquareMoved: 1,
+      strength: 3,
       initiative: 2,
     },
   ]

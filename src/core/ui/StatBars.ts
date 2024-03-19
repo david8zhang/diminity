@@ -4,13 +4,12 @@ import { PartyMember } from '../controller/PartyMember'
 import { UIValueBar } from './UIValueBar'
 
 export class StatBars {
-  private healthBar: UIValueBar
-  private healthText: Phaser.GameObjects.Text
+  protected healthBar: UIValueBar
+  protected healthText: Phaser.GameObjects.Text
+  protected magicArmor: UIValueBar
+  protected physicalArmor: UIValueBar
+  protected ui: UI
 
-  private magicArmor: UIValueBar
-  private physicalArmor: UIValueBar
-
-  private ui: UI
   constructor(ui: UI) {
     this.ui = ui
     this.healthBar = new UIValueBar(this.ui, {
