@@ -60,9 +60,7 @@ export class PlayerPartyMember extends PartyMember {
 
   goBackToIdle() {
     this.actionState = ActionState.IDLE
-    this.game.map.clearTint(this.sprite.x, this.sprite.y)
-    this.game.map.clearAllTint(this.getMoveableSquares())
-    this.game.map.dehighlightTiles()
+    this.resetHighlight()
     this.selectedAction = null
     UI.instance.actionMenu.highlightSelectedAction('')
     UI.instance.actionPointDisplay.showAvailableActionPoints(this)
@@ -84,9 +82,16 @@ export class PlayerPartyMember extends PartyMember {
     this.game.map.highlightTiles(moveableSquarePositions)
   }
 
+  resetHighlight() {
+    this.game.map.clearTint(this.sprite.x, this.sprite.y)
+    this.game.map.clearAllTint(this.getMoveableSquares())
+    this.game.map.dehighlightTiles()
+  }
+
   onActionClick(actionName: ActionNames) {
     const clickedAction = this.actions[actionName]
     if (clickedAction && clickedAction.apCost <= this.currActionPoints) {
+      this.resetHighlight()
       this.actionState = ActionState.PERFORMING_ACTION
       this.selectedAction = this.actions[actionName]!
       this.selectedAction.onSelected()

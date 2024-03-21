@@ -1,4 +1,5 @@
 import Game from '../../scenes/Game'
+import { UI } from '../../scenes/UI'
 import { PartyController, PartyControllerConfig } from './PartyController'
 import { PartyMemberConfig } from './PartyMember'
 import { ActionState, PlayerPartyMember } from './PlayerPartyMember'
@@ -25,6 +26,12 @@ export class Player extends PartyController {
             }
             break
           }
+        }
+        const partyMember = this.game.getPartyMemberAtPosition(pointer.worldX, pointer.worldY)
+        if (partyMember) {
+          UI.instance.displayPartyMemberFloatingStatBar(partyMember)
+        } else {
+          UI.instance.hideFloatingStatBars()
         }
       }
     })

@@ -1,4 +1,5 @@
 import { Constants, Side } from '../core/Constants'
+import { PartyMember } from '../core/controller/PartyMember'
 import { PlayerPartyMember } from '../core/controller/PlayerPartyMember'
 import { ActionMenu } from '../core/ui/ActionMenu'
 import { ActionPointDisplay } from '../core/ui/ActionPointDisplay'
@@ -43,7 +44,20 @@ export class UI extends Phaser.Scene {
       .setFillStyle(0x000000)
       .setOrigin(0)
 
-    this.statBars = new StatBars(this)
+    this.statBars = new StatBars(this, {
+      healthBarPosition: {
+        x: Constants.WINDOW_WIDTH / 2 - 125,
+        y: Constants.GAME_HEIGHT + 50,
+      },
+      physicalArmorPosition: {
+        x: Constants.WINDOW_WIDTH / 2 - 125,
+        y: Constants.GAME_HEIGHT + 30,
+      },
+      magicArmorPosition: {
+        x: Constants.WINDOW_WIDTH / 2 + 5,
+        y: Constants.GAME_HEIGHT + 30,
+      },
+    })
     this.profileImage = new ProfileImage(this)
     this.actionMenu = new ActionMenu(this)
 
@@ -123,5 +137,14 @@ export class UI extends Phaser.Scene {
     if (turnOrderCardToHighlight) {
       turnOrderCardToHighlight.highlight()
     }
+  }
+
+  displayPartyMemberFloatingStatBar(partyMember: PartyMember) {
+    this.floatingStatBars.setVisible(true)
+    this.floatingStatBars.selectCurrPartyMember(partyMember)
+  }
+
+  hideFloatingStatBars() {
+    this.floatingStatBars.setVisible(false)
   }
 }

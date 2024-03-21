@@ -4,7 +4,9 @@ import { Action } from './Action'
 import { ActionNames } from './ActionNames'
 
 export class BasicAttackAction extends Action {
-  private static ATTACK_RANGE = 1
+  private static ATTACK_RANGE = 2
+  private static TILE_HIGHLIGHT_COLOR = 0xff7979
+
   constructor(partyMember: PartyMember) {
     super(ActionNames.BASIC_ATTACK, 'sword-icon', partyMember)
     this.apCost = 1
@@ -29,7 +31,7 @@ export class BasicAttackAction extends Action {
 
   public onSelected() {
     const targetableSquares = this.getTargetableSquares()
-    Game.instance.map.tintTiles(targetableSquares, 0xff0000)
+    Game.instance.map.tintTiles(targetableSquares, BasicAttackAction.TILE_HIGHLIGHT_COLOR)
   }
 
   public getTargetableSquares() {
@@ -47,7 +49,7 @@ export class BasicAttackAction extends Action {
     ]
     const targetableSquares: { row: number; col: number }[] = []
     let distance = 0
-    while (queue.length > 0 && distance <= 1) {
+    while (queue.length > 0 && distance <= BasicAttackAction.ATTACK_RANGE) {
       const queueSize = queue.length
       for (let i = 0; i < queueSize; i++) {
         const cell = queue.shift()
@@ -71,7 +73,8 @@ export class BasicAttackAction extends Action {
     }
     return targetableSquares.filter((ms) => {
       const { x, y } = Game.instance.map.getWorldPositionForRowCol(ms.row, ms.col)
-      return this.source.canMoveToPosition(x, y)
+      const partyMemberAtPosition = Game.instance.getPartyMemberAtPosition(x, y)
+      return !partyMemberAtPosition || partyMemberAtPosition.side !== this.source.side
     })
   }
 

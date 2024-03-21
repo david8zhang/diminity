@@ -16,7 +16,7 @@ interface UIValueBarConfig {
 }
 
 export class UIValueBar {
-  bar: Phaser.GameObjects.Graphics
+  graphics: Phaser.GameObjects.Graphics
   x: number
   y: number
   maxValue: number
@@ -32,8 +32,8 @@ export class UIValueBar {
   hideBg: boolean = false
 
   constructor(scene: Phaser.Scene, config: UIValueBarConfig) {
-    this.bar = new Phaser.GameObjects.Graphics(scene)
-    this.bar.setDepth(1000)
+    this.graphics = new Phaser.GameObjects.Graphics(scene)
+    this.graphics.setDepth(1000)
     const { x, y, maxValue, width, height, showBorder, borderWidth, bgColor, fillColor } = config
     this.x = x
     this.y = y
@@ -60,13 +60,13 @@ export class UIValueBar {
     }
 
     this.showBorder = showBorder || false
-    scene.add.existing(this.bar)
+    scene.add.existing(this.graphics)
     this.draw()
-    this.bar.setDepth(config.depth ? config.depth : 100)
+    this.graphics.setDepth(config.depth ? config.depth : 100)
   }
 
   setVisible(visible: boolean) {
-    this.bar.setVisible(visible)
+    this.graphics.setVisible(visible)
   }
 
   decrease(amount: number) {
@@ -91,15 +91,19 @@ export class UIValueBar {
     this.draw()
   }
 
+  get depth() {
+    return this.graphics.depth
+  }
+
   draw() {
-    this.bar.clear()
+    this.graphics.clear()
 
     // Border
     const borderWidth = this.showBorder ? this.borderWidth : 0
-    this.bar.fillStyle(this.bgColor)
+    this.graphics.fillStyle(this.bgColor)
 
     if (!this.hideBg) {
-      this.bar.fillRect(
+      this.graphics.fillRect(
         this.x - borderWidth / 2,
         this.y - borderWidth / 2,
         this.width + borderWidth,
@@ -108,19 +112,19 @@ export class UIValueBar {
     }
 
     const percentage = this.currValue / this.maxValue
-    this.bar.fillStyle(this.fillColor ? this.fillColor : Constants.HP_BAR_COLOR)
+    this.graphics.fillStyle(this.fillColor ? this.fillColor : Constants.HP_BAR_COLOR)
 
     if (this.isVertical) {
       const length = Math.round(percentage * this.height)
       const remainderLength = Math.round((1 - percentage) * this.height)
-      this.bar.fillRect(this.x, this.y + remainderLength, this.width, length)
+      this.graphics.fillRect(this.x, this.y + remainderLength, this.width, length)
     } else {
       const length = Math.floor(percentage * this.width)
-      this.bar.fillRect(this.x, this.y, length, this.height)
+      this.graphics.fillRect(this.x, this.y, length, this.height)
     }
   }
 
   destroy() {
-    this.bar.destroy()
+    this.graphics.destroy()
   }
 }
