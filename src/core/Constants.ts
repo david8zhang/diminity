@@ -50,7 +50,7 @@ export class Constants {
       },
       maxHealth: 25,
       texture: 'rogue',
-      apCostPerSquareMoved: 0.5,
+      apCostPerSquareMoved: 0.1,
       actionPointPerTurn: 4,
       strength: 3,
       initiative: 4,

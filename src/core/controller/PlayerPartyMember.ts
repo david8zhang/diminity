@@ -67,7 +67,12 @@ export class PlayerPartyMember extends PartyMember {
   }
 
   showActionPointCostForMove(worldX: number, worldY: number) {
-    this.game.map.clearAllTint(this.getMoveableSquares())
+    const moveableSquares = this.getMoveableSquares()
+    moveableSquares.forEach(({ row, col }) => {
+      const worldXY = this.game.map.getWorldPositionForRowCol(row, col)
+      this.game.map.clearTint(worldXY.x, worldXY.y, 0.8)
+    })
+
     const tileDistance = this.game.map.getTileDistance(this.sprite.x, this.sprite.y, worldX, worldY)
     const costForMove = Math.round(this.apCostPerSquareMoved * tileDistance)
 
@@ -83,8 +88,7 @@ export class PlayerPartyMember extends PartyMember {
   }
 
   resetHighlight() {
-    this.game.map.clearTint(this.sprite.x, this.sprite.y)
-    this.game.map.clearAllTint(this.getMoveableSquares())
+    this.game.map.clearAllTint()
     this.game.map.dehighlightTiles()
   }
 

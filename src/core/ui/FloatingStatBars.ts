@@ -30,6 +30,7 @@ export class FloatingStatBars {
         y: this.bgRect.y - 20,
       },
     })
+    this.statBars.setVisible(false)
   }
 
   selectCurrPartyMember(partyMember: PartyMember) {

@@ -91,17 +91,16 @@ export class Map {
     })
   }
 
-  clearAllTint(tilePositions: { row: number; col: number }[]) {
-    tilePositions.forEach((pos) => {
-      const tile = this.tilemap.getTileAt(pos.col, pos.row, false, 'Ground')
-      if (tile) {
-        tile.tint = 0xffffff
-        tile.setAlpha(0.8)
+  clearAllTint() {
+    for (let i = 0; i < this.grid.numRows; i++) {
+      for (let j = 0; j < this.grid.numCols; j++) {
+        const worldXY = this.getWorldPositionForRowCol(i, j)
+        this.clearTint(worldXY.x, worldXY.y)
       }
-    })
+    }
   }
 
-  clearTint(worldX: number, worldY: number) {
+  clearTint(worldX: number, worldY: number, alpha: number = 1) {
     const tile = this.tilemap.getTileAtWorldXY(
       worldX,
       worldY,
@@ -111,6 +110,7 @@ export class Map {
     )
     if (tile) {
       tile.tint = 0xffffff
+      tile.setAlpha(alpha)
     }
   }
 

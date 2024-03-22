@@ -1,4 +1,5 @@
 import Game from '../../scenes/Game'
+import { UI } from '../../scenes/UI'
 import { PartyMember } from '../controller/PartyMember'
 import { Action } from './Action'
 import { ActionNames } from './ActionNames'
@@ -23,9 +24,11 @@ export class BasicAttackAction extends Action {
   }
 
   public handleClick(worldX: number, worldY: number): void {
-    const partyMember = Game.instance.getPartyMemberAtPosition(worldX, worldY)
-    if (partyMember && this.isValidAttackTarget(partyMember)) {
-      this.execute(partyMember)
+    if (Game.instance.map.isWorldXYWithinBounds(worldX, worldY)) {
+      const partyMember = Game.instance.getPartyMemberAtPosition(worldX, worldY)
+      if (partyMember && this.isValidAttackTarget(partyMember)) {
+        this.execute(partyMember)
+      }
     }
   }
 
@@ -82,5 +85,9 @@ export class BasicAttackAction extends Action {
     return this.source.strength * Phaser.Math.Between(1, 3)
   }
 
-  public execute(target: PartyMember): void {}
+  public execute(target: PartyMember): void {
+    Game.instance.player.disablePointerMoveEvents = true
+    UI.instance.floatingStatBars.setVisible(true)
+    UI.instance.floatingStatBars.selectCurrPartyMember(target)
+  }
 }

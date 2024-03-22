@@ -5,6 +5,8 @@ import { PartyMemberConfig } from './PartyMember'
 import { ActionState, PlayerPartyMember } from './PlayerPartyMember'
 
 export class Player extends PartyController {
+  public disablePointerMoveEvents: boolean = false
+
   constructor(game: Game, config: PartyControllerConfig) {
     super(game, config)
     this.setupInputListener()
@@ -18,7 +20,7 @@ export class Player extends PartyController {
 
   setupInputListener() {
     this.game.input.on(Phaser.Input.Events.POINTER_MOVE, (pointer: Phaser.Input.Pointer) => {
-      if (this.selectedPartyMember) {
+      if (this.selectedPartyMember && !this.disablePointerMoveEvents) {
         switch (this.selectedPartyMember.actionState) {
           case ActionState.SELECTING_MOVE_DEST: {
             if (this.selectedPartyMember.canMoveToPosition(pointer.worldX, pointer.worldY)) {
@@ -27,22 +29,31 @@ export class Player extends PartyController {
             break
           }
         }
-        const partyMember = this.game.getPartyMemberAtPosition(pointer.worldX, pointer.worldY)
-        if (partyMember) {
-          UI.instance.displayPartyMemberFloatingStatBar(partyMember)
-        } else {
-          UI.instance.hideFloatingStatBars()
+        if (Game.instance.map.isWorldXYWithinBounds(pointer.worldX, pointer.worldY)) {
+          const partyMember = this.game.getPartyMemberAtPosition(pointer.worldX, pointer.worldY)
+          if (partyMember && partyMember.id !== this.selectedPartyMember.id) {
+            UI.instance.displayPartyMemberFloatingStatBar(partyMember)
+          } else {
+            UI.instance.hideFloatingStatBars()
+          }
         }
       }
     })
 
     this.game.input.on(Phaser.Input.Events.POINTER_UP, (pointer: Phaser.Input.Pointer) => {
-      if (this.selectedPartyMember) {
+      if (this.selectedPartyMember && this.isPlayerTurn) {
         const { worldX, worldY } = pointer
         switch (this.selectedPartyMember.actionState) {
           case ActionState.SELECTING_MOVE_DEST: {
             if (this.selectedPartyMember.canMoveToPosition(worldX, worldY)) {
               this.selectedPartyMember.moveToPosition(worldX, worldY)
+            }
+            break
+          }
+          case ActionState.PERFORMING_ACTION: {
+            const playerPartyMember = this.selectedPartyMember as PlayerPartyMember
+            if (playerPartyMember.selectedAction) {
+              playerPartyMember.selectedAction?.handleClick(worldX, worldY)
             }
             break
           }
@@ -85,6 +96,7 @@ export class Player extends PartyController {
 
   endTurn() {
     if (this.selectedPartyMember) {
+      this.disablePointerMoveEvents = false
       this.selectedPartyMember.goBackToIdle()
       this.game.endCurrPartyMemberTurn()
     }
