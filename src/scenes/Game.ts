@@ -121,11 +121,18 @@ export default class Game extends Phaser.Scene {
   }
 
   updateTurnOrder() {
+    const partyMemberToActId = this.partyMemberToActId
     this.turnOrder = this.turnOrder.filter((partyMemberId) => {
       const partyMember = this.getPartyMember(partyMemberId)
       return partyMember.currHealth > 0
     })
     UI.instance.updateTurnOrderCards()
+
+    // Update turn index, as the number of entites that can act has now changed
+
+    // e.g., if the party member to act index was 4, and there were 5 living entities, if one dies then
+    // the new party member to act index should be 3 to prevent index out of bounds
+    this.partyMemberToActIndex = this.turnOrder.indexOf(partyMemberToActId)
     UI.instance.highlightPartyMemberCard(this.partyMemberToActId)
   }
 
