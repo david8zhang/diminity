@@ -6,7 +6,7 @@ import { Map } from '../core/map/Map'
 import { PartyMember, PartyMemberConfig } from '../core/controller/PartyMember'
 import { Player } from '../core/controller/Player'
 import { UI } from './UI'
-import { createSlashAnims } from '../core/anims/createSlashAnims'
+import { createAnims } from '../core/anims/createAnims'
 
 export default class Game extends Phaser.Scene {
   private static _instance: Game
@@ -67,7 +67,7 @@ export default class Game extends Phaser.Scene {
 
   create() {
     // Create animations
-    createSlashAnims(this.anims)
+    createAnims(this.anims)
 
     // Shader plugin to outline sprites
     this.postFxPlugin = this.plugins.get('rexOutlinePipeline')
