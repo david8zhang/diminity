@@ -28,6 +28,9 @@ export class Player extends PartyController {
             }
             break
           }
+          case ActionState.PERFORMING_ACTION: {
+            this.selectedPartyMember.selectedAction!.handleHover(pointer.worldX, pointer.worldY)
+          }
         }
         if (Game.instance.map.isWorldXYWithinBounds(pointer.worldX, pointer.worldY)) {
           const partyMember = this.game.getPartyMemberAtPosition(pointer.worldX, pointer.worldY)

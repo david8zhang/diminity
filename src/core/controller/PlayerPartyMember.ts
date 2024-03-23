@@ -52,9 +52,11 @@ export class PlayerPartyMember extends PartyMember {
   }
 
   moveToPosition(worldX: number, worldY: number) {
+    UI.instance.endTurnButton.setVisible(false)
     this.actionState = ActionState.MOVING
     super.moveToPosition(worldX, worldY, () => {
       this.goBackToIdle()
+      UI.instance.endTurnButton.setVisible(true)
     })
   }
 

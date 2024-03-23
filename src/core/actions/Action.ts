@@ -13,6 +13,9 @@ export abstract class Action {
     this.source = source
   }
   public abstract handleClick(worldX: number, worldY: number): void
+  public handleHover(worldX: number, worldY: number) {
+    return
+  }
   public abstract execute(target: PartyMember[] | PartyMember): void
   public abstract onSelected(): void
 }

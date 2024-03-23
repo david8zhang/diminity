@@ -19,6 +19,9 @@ export class Preload extends Phaser.Scene {
 
     // Icons
     this.load.image('sword-icon', 'icons/sword.png')
+
+    // Animations
+    this.load.atlas('slash', 'animations/slash.png', 'animations/slash.json')
   }
 
   create() {
