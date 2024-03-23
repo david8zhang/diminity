@@ -39,7 +39,7 @@ export class PartyController {
     return (
       Object.values(this.partyMembers).find((pm) => {
         const { row, col } = this.game.map.getRowColForWorldPosition(pm.sprite.x, pm.sprite.y)
-        return row == rowCol.row && col == rowCol.col
+        return row == rowCol.row && col == rowCol.col && pm.currHealth > 0
       }) != undefined
     )
   }

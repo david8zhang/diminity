@@ -99,6 +99,8 @@ export default class Game extends Phaser.Scene {
     const partyMemberToAct =
       this.cpu.partyMembers[partyMemberToActId] || this.player.partyMembers[partyMemberToActId]
     this.startPartyMemberTurn(partyMemberToAct)
+    UI.instance.createTurnOrderCards()
+    UI.instance.highlightPartyMemberCard(this.partyMemberToActId)
   }
 
   startPartyMemberTurn(partyMemberToAct: PartyMember) {
@@ -112,7 +114,24 @@ export default class Game extends Phaser.Scene {
       partyMemberToAct.startTurn()
       if (partyMemberToAct.side === Side.CPU) {
         this.cpu.movePartyMember(partyMemberToAct.id)
+      } else {
+        UI.instance.endTurnButton.setVisible(true)
       }
+    })
+  }
+
+  updateTurnOrder() {
+    this.turnOrder = this.turnOrder.filter((partyMemberId) => {
+      const partyMember = this.getPartyMember(partyMemberId)
+      return partyMember.currHealth > 0
+    })
+    UI.instance.updateTurnOrderCards()
+    UI.instance.highlightPartyMemberCard(this.partyMemberToActId)
+  }
+
+  handleDeath(partyMember: PartyMember) {
+    partyMember.handleDeath(() => {
+      this.updateTurnOrder()
     })
   }
 
@@ -126,6 +145,9 @@ export default class Game extends Phaser.Scene {
     const partyMemberToAct =
       this.cpu.partyMembers[partyMemberToActId] || this.player.partyMembers[partyMemberToActId]
     this.startPartyMemberTurn(partyMemberToAct)
+    if (partyMemberToAct.side === Side.CPU) {
+      UI.instance.endTurnButton.setVisible(false)
+    }
   }
 
   getPartyMemberAtPosition(worldX: number, worldY: number) {

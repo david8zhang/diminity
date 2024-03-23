@@ -54,7 +54,7 @@ export class UI extends Phaser.Scene {
         y: Constants.GAME_HEIGHT + 30,
       },
       magicArmorPosition: {
-        x: Constants.WINDOW_WIDTH / 2 + 5,
+        x: Constants.WINDOW_WIDTH / 2 + 2,
         y: Constants.GAME_HEIGHT + 30,
       },
     })
@@ -84,8 +84,6 @@ export class UI extends Phaser.Scene {
     this.actionPointDisplay = new ActionPointDisplay(this)
     if (Game.instance) {
       Game.instance.onUIReady()
-      this.createTurnOrderCards()
-      this.highlightPartyMemberCard(Game.instance.partyMemberToActId)
     }
   }
 
@@ -112,6 +110,12 @@ export class UI extends Phaser.Scene {
       x += UI.TURN_ORDER_CARD_WIDTH + padding
       this.turnOrderCards.push(turnOrderCard)
     })
+  }
+
+  updateTurnOrderCards() {
+    this.turnOrderCards.forEach((card) => card.destroy())
+    this.turnOrderCards = []
+    this.createTurnOrderCards()
   }
 
   selectPartyMember(partyMember: PlayerPartyMember) {

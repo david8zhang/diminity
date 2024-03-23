@@ -1,12 +1,17 @@
 import Game from '../../scenes/Game'
 import { UI } from '../../scenes/UI'
+import { Side } from '../Constants'
 import { PartyMember } from '../controller/PartyMember'
+import { PlayerPartyMember } from '../controller/PlayerPartyMember'
+import { UINumber } from '../ui/UINumber'
 import { Action } from './Action'
 import { ActionNames } from './ActionNames'
 
 export class BasicAttackAction extends Action {
   private static ATTACK_RANGE = 2
+  public static AP_COST = 2
   private static TILE_HIGHLIGHT_COLOR = 0xff7979
+  private processingAttack: boolean = false
 
   constructor(partyMember: PartyMember) {
     super(ActionNames.BASIC_ATTACK, 'sword-icon', partyMember)
@@ -86,8 +91,42 @@ export class BasicAttackAction extends Action {
   }
 
   public execute(target: PartyMember): void {
-    Game.instance.player.disablePointerMoveEvents = true
-    UI.instance.floatingStatBars.setVisible(true)
-    UI.instance.floatingStatBars.selectCurrPartyMember(target)
+    if (!this.processingAttack) {
+      this.processingAttack = true
+      Game.instance.player.disablePointerMoveEvents = true
+      UI.instance.floatingStatBars.setVisible(true)
+      UI.instance.floatingStatBars.selectCurrPartyMember(target)
+      // const damage = this.calculateDamage()
+      const damage = 100
+      target.decreaseHealth(damage)
+      UI.instance.floatingStatBars.displayDamage(target)
+      Game.instance.cameras.main.shake(150, 0.001)
+      this.source.subtractActionPoints(BasicAttackAction.AP_COST)
+      if (this.source.side === Side.PLAYER) {
+        const playerPartyMember = this.source as PlayerPartyMember
+        playerPartyMember.goBackToIdle()
+      }
+      UI.instance.endTurnButton.setVisible(false)
+      UINumber.createNumber(
+        `-${damage}`,
+        Game.instance,
+        target.sprite.x,
+        target.sprite.y,
+        'white',
+        () => {
+          if (this.source.side === Side.PLAYER) {
+            Game.instance.player.disablePointerMoveEvents = false
+            UI.instance.floatingStatBars.setVisible(false)
+          }
+          this.processingAttack = false
+
+          // Check if target has died
+          if (target.currHealth <= 0) {
+            Game.instance.handleDeath(target)
+          }
+          UI.instance.endTurnButton.setVisible(true)
+        }
+      )
+    }
   }
 }

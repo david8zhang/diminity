@@ -1,4 +1,5 @@
 import Game from '../../scenes/Game'
+import { UI } from '../../scenes/UI'
 import { Constants, Side } from '../Constants'
 import { Action } from '../actions/Action'
 import { ActionCreator } from '../actions/ActionCreator'
@@ -13,6 +14,8 @@ export interface PartyMemberConfig {
   }
   texture: string
   maxHealth: number
+  maxPhysicalArmor: number
+  maxMagicArmor: number
   side: Side
   actionNames?: ActionNames[]
 
@@ -28,8 +31,14 @@ export class PartyMember {
   public sprite: Phaser.GameObjects.Sprite
   public id: string
 
+  // Stat bar attributes
   public currHealth: number = 0
   public maxHealth: number = 0
+  public currPhysicalArmor: number = 0
+  public maxPhysicalArmor: number = 0
+  public currMagicArmor: number = 0
+  public maxMagicArmor: number = 0
+
   public actionPointPerTurn: number = 0
   public currActionPoints: number = 0
   public apCostPerSquareMoved: number = 0
@@ -43,12 +52,18 @@ export class PartyMember {
     this.id = config.id
     this.currHealth = config.maxHealth
     this.maxHealth = config.maxHealth
+    this.currPhysicalArmor = config.maxPhysicalArmor
+    this.maxPhysicalArmor = config.maxPhysicalArmor
+    this.currMagicArmor = config.maxMagicArmor
+    this.maxMagicArmor = config.maxMagicArmor
     this.actionPointPerTurn = config.actionPointPerTurn
     this.apCostPerSquareMoved = config.apCostPerSquareMoved
     this.initiative = config.initiative
     this.side = config.side
     this.currActionPoints = this.actionPointPerTurn
-    this.sprite = this.game.add.sprite(config.position.x, config.position.y, config.texture)
+    this.sprite = this.game.add
+      .sprite(config.position.x, config.position.y, config.texture)
+      .setInteractive({ useHandCursor: 'true' })
     this.strength = config.strength
     let allActions = [ActionNames.BASIC_ATTACK]
     if (config.actionNames) {
@@ -71,6 +86,21 @@ export class PartyMember {
     if (Game.instance) {
       Game.instance.postFxPlugin.remove(this.sprite)
     }
+  }
+
+  handleDeath(cb: Function) {
+    this.game.tweens.add({
+      targets: [this.sprite],
+      alpha: {
+        from: 1,
+        to: 0,
+      },
+      duration: 500,
+      ease: Phaser.Math.Easing.Sine.Out,
+      onComplete: () => {
+        cb()
+      },
+    })
   }
 
   get moveRange() {

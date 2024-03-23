@@ -22,7 +22,7 @@ export class PlayerPartyMember extends PartyMember {
   constructor(game: Game, player: Player, config: PartyMemberConfig) {
     super(game, config)
     this.player = player
-    this.sprite.setInteractive({ useHandCursor: 'true' }).on(Phaser.Input.Events.POINTER_UP, () => {
+    this.sprite.on(Phaser.Input.Events.POINTER_UP, () => {
       this.player.handlePartyMemberClick(this.id)
     })
   }

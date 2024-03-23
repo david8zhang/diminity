@@ -44,4 +44,9 @@ export class TurnOrderCard {
   dehighlight() {
     this.bgRect.setStrokeStyle(2, 0x666666)
   }
+
+  destroy() {
+    this.sprite.destroy()
+    this.bgRect.destroy()
+  }
 }
