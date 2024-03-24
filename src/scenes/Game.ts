@@ -40,7 +40,6 @@ export default class Game extends Phaser.Scene {
   loadPlayerPartyConfigs(): PartyMemberConfig[] {
     return Constants.DEFAULT_PLAYER_CONFIG.map((config) => {
       return {
-        position: this.map.getWorldPositionForRowCol(config.rowColPos.row, config.rowColPos.col),
         id: Phaser.Utils.String.UUID(),
         ...config,
         side: Side.PLAYER,
@@ -55,7 +54,7 @@ export default class Game extends Phaser.Scene {
       if (tile.index !== -1) {
         const randEnemyConfig = Phaser.Utils.Array.GetRandom(Constants.ENEMY_TYPES)
         enemyConfigs.push({
-          position: this.map.getWorldPositionForRowCol(tile.y, tile.x),
+          rowColPos: { row: tile.y, col: tile.x },
           id: Phaser.Utils.String.UUID(),
           ...randEnemyConfig,
           side: Side.CPU,
@@ -148,16 +147,18 @@ export default class Game extends Phaser.Scene {
 
   endCurrPartyMemberTurn() {
     const prevPartyMember = this.getPartyMember(this.partyMemberToActId)
-    prevPartyMember.dehighlight()
-    UI.instance.dehighlightPartyMemberCard(this.partyMemberToActId)
-    this.partyMemberToActIndex = (this.partyMemberToActIndex + 1) % this.turnOrder.length
-    UI.instance.highlightPartyMemberCard(this.turnOrder[this.partyMemberToActIndex])
-    const partyMemberToActId = this.turnOrder[this.partyMemberToActIndex]
-    const partyMemberToAct =
-      this.cpu.partyMembers[partyMemberToActId] || this.player.partyMembers[partyMemberToActId]
-    this.startPartyMemberTurn(partyMemberToAct)
-    if (partyMemberToAct.side === Side.CPU) {
-      UI.instance.endTurnButton.setVisible(false)
+    if (prevPartyMember) {
+      prevPartyMember.dehighlight()
+      UI.instance.dehighlightPartyMemberCard(this.partyMemberToActId)
+      this.partyMemberToActIndex = (this.partyMemberToActIndex + 1) % this.turnOrder.length
+      UI.instance.highlightPartyMemberCard(this.turnOrder[this.partyMemberToActIndex])
+      const partyMemberToActId = this.turnOrder[this.partyMemberToActIndex]
+      const partyMemberToAct =
+        this.cpu.partyMembers[partyMemberToActId] || this.player.partyMembers[partyMemberToActId]
+      this.startPartyMemberTurn(partyMemberToAct)
+      if (partyMemberToAct.side === Side.CPU) {
+        UI.instance.endTurnButton.setVisible(false)
+      }
     }
   }
 

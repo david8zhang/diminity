@@ -1,5 +1,4 @@
 import Game from '../../scenes/Game'
-import { UI } from '../../scenes/UI'
 import { Constants, Side } from '../Constants'
 import { Action } from '../actions/Action'
 import { ActionCreator } from '../actions/ActionCreator'
@@ -8,18 +7,21 @@ import { Node } from '../map/Pathfinding'
 
 export interface PartyMemberConfig {
   id: string
-  position: {
-    x: number
-    y: number
+  rowColPos: {
+    row: number
+    col: number
   }
   texture: string
+  side: Side
+  actionNames?: ActionNames[]
+  animOverrides?: {
+    [key in ActionNames]: any
+  }
+
+  // Stats
   maxHealth: number
   maxPhysicalArmor: number
   maxMagicArmor: number
-  side: Side
-  actionNames?: ActionNames[]
-
-  // Stats
   actionPointPerTurn: number
   apCostPerSquareMoved: number
   initiative: number
@@ -46,6 +48,7 @@ export class PartyMember {
   public strength: number = 0
   public side: Side
   public actions: { [key in ActionNames]?: Action }
+  public animOverrides: { [key in ActionNames]?: any } = {}
 
   constructor(game: Game, config: PartyMemberConfig) {
     this.game = game
@@ -61,8 +64,13 @@ export class PartyMember {
     this.initiative = config.initiative
     this.side = config.side
     this.currActionPoints = this.actionPointPerTurn
+
+    const position = this.game.map.getWorldPositionForRowCol(
+      config.rowColPos.row,
+      config.rowColPos.col
+    )
     this.sprite = this.game.add
-      .sprite(config.position.x, config.position.y, config.texture)
+      .sprite(position.x, position.y, config.texture)
       .setInteractive({ useHandCursor: 'true' })
     this.strength = config.strength
     let allActions = [ActionNames.BASIC_ATTACK]
@@ -70,6 +78,9 @@ export class PartyMember {
       allActions = allActions.concat(config.actionNames)
     }
     this.actions = ActionCreator.createActionMap(allActions, this)
+    if (config.animOverrides) {
+      this.animOverrides = config.animOverrides
+    }
   }
 
   startTurn(outlineColor?: number) {

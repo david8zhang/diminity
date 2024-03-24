@@ -93,11 +93,13 @@ export class BasicAttackAction extends Action {
   }
 
   handleHover(worldX: number, worldY: number) {
-    const partyMember = Game.instance.getPartyMemberAtPosition(worldX, worldY)
-    if (partyMember && this.isValidAttackTarget(partyMember)) {
-      UI.instance.actionPointDisplay.displayActionPotentialPointCost(this.source, this.apCost)
-    } else {
-      UI.instance.actionPointDisplay.showAvailableActionPoints(this.source)
+    if (Game.instance.map.isWorldXYWithinBounds(worldX, worldY)) {
+      const partyMember = Game.instance.getPartyMemberAtPosition(worldX, worldY)
+      if (partyMember && this.isValidAttackTarget(partyMember)) {
+        UI.instance.actionPointDisplay.displayActionPotentialPointCost(this.source, this.apCost)
+      } else {
+        UI.instance.actionPointDisplay.showAvailableActionPoints(this.source)
+      }
     }
   }
 
@@ -114,7 +116,12 @@ export class BasicAttackAction extends Action {
         .setOrigin(0, 0.5)
         .setVisible(true)
         .setDepth(target.sprite.depth + 1)
-      this.animSprite.play('slash')
+
+      let animName = 'slash'
+      if (this.source.animOverrides[ActionNames.BASIC_ATTACK]) {
+        animName = this.source.animOverrides[ActionNames.BASIC_ATTACK]
+      }
+      this.animSprite.play(animName)
       this.animSprite
         .on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
           this.animSprite.removeAllListeners()

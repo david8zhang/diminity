@@ -1,3 +1,5 @@
+import { ActionNames } from './actions/ActionNames'
+
 export enum Side {
   CPU,
   PLAYER,
@@ -32,6 +34,9 @@ export class Constants {
       actionPointPerTurn: 4,
       strength: 2,
       initiative: 2,
+      animOverrides: {
+        [ActionNames.BASIC_ATTACK]: 'bonk',
+      },
     },
     {
       rowColPos: {
@@ -46,6 +51,9 @@ export class Constants {
       actionPointPerTurn: 3,
       strength: 4,
       initiative: 3,
+      animOverrides: {
+        [ActionNames.BASIC_ATTACK]: 'slash',
+      },
     },
     {
       rowColPos: {
@@ -60,6 +68,9 @@ export class Constants {
       actionPointPerTurn: 4,
       strength: 3,
       initiative: 4,
+      animOverrides: {
+        [ActionNames.BASIC_ATTACK]: 'stab',
+      },
     },
   ]
 
