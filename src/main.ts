@@ -6,6 +6,7 @@ import Game from './scenes/Game'
 import { Constants } from './core/Constants'
 import { Preload } from './scenes/Preload'
 import { UI } from './scenes/UI'
+import { GameOver } from './scenes/GameOver'
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -32,7 +33,7 @@ const config: Phaser.Types.Core.GameConfig = {
   scale: {
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
-  scene: [Preload, Game, UI],
+  scene: [Preload, Game, UI, GameOver],
 }
 
 new Phaser.Game(config)

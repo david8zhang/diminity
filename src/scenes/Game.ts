@@ -141,7 +141,24 @@ export default class Game extends Phaser.Scene {
 
   handleDeath(partyMember: PartyMember) {
     partyMember.handleDeath(() => {
-      this.updateTurnOrder()
+      // Check if game over conditions are met
+      if (this.isGameOver()) {
+        this.handleGameOver()
+      } else {
+        this.updateTurnOrder()
+      }
+    })
+  }
+
+  isGameOver() {
+    return this.cpu.areAllPartyMembersDead() || this.player.areAllPartyMembersDead()
+  }
+
+  handleGameOver() {
+    const isPlayerVictory = this.cpu.areAllPartyMembersDead()
+    this.scene.stop('ui')
+    this.scene.start('gameover', {
+      isVictory: isPlayerVictory,
     })
   }
 
