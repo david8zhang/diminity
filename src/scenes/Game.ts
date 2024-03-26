@@ -85,6 +85,9 @@ export default class Game extends Phaser.Scene {
     // center on first party member to act
     const partyMemberToAct = this.getPartyMember(this.turnOrder[this.partyMemberToActIndex])
     this.cameras.main.centerOn(partyMemberToAct.sprite.x, partyMemberToAct.sprite.y)
+
+    const sprite = this.add.sprite(100, 100, '')
+    sprite.play('swipe')
   }
 
   public get partyMemberToActId() {

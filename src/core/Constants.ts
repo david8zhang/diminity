@@ -85,6 +85,9 @@ export class Constants {
       apCostPerSquareMoved: 1,
       strength: 3,
       initiative: 1,
+      animOverrides: {
+        [ActionNames.BASIC_ATTACK]: 'swipe',
+      },
     },
     {
       texture: 'spider',
@@ -96,6 +99,9 @@ export class Constants {
       apCostPerSquareMoved: 1,
       strength: 3,
       initiative: 2,
+      animOverrides: {
+        [ActionNames.BASIC_ATTACK]: 'swipe',
+      },
     },
   ]
 }

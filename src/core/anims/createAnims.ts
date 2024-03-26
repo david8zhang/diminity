@@ -31,4 +31,15 @@ export const createAnims = (anims: Phaser.Animations.AnimationManager) => {
     repeat: 0,
     frameRate: 10,
   })
+
+  anims.create({
+    key: 'swipe',
+    frames: anims.generateFrameNames('swipe', {
+      start: 0,
+      end: 4,
+      suffix: '.png',
+    }),
+    repeat: 0,
+    frameRate: 10,
+  })
 }

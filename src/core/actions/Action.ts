@@ -16,6 +16,6 @@ export abstract class Action {
   public handleHover(worldX: number, worldY: number) {
     return
   }
-  public abstract execute(target: PartyMember[] | PartyMember): void
+  public abstract execute(target: PartyMember[] | PartyMember, onComplete?: Function): void
   public abstract onSelected(): void
 }

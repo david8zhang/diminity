@@ -8,7 +8,7 @@ import { Action } from './Action'
 import { ActionNames } from './ActionNames'
 
 export class BasicAttackAction extends Action {
-  private static ATTACK_RANGE = 2
+  public static ATTACK_RANGE = 2
   public static AP_COST = 2
   private static TILE_HIGHLIGHT_COLOR = 0xff7979
   private processingAttack: boolean = false
@@ -103,11 +103,13 @@ export class BasicAttackAction extends Action {
     }
   }
 
-  public execute(target: PartyMember): void {
+  public execute(target: PartyMember, onComplete?: Function): void {
     if (!this.processingAttack) {
       this.processingAttack = true
       this.source.subtractActionPoints(this.apCost)
-      Game.instance.player.disablePointerMoveEvents = true
+      if (this.source.side === Side.PLAYER) {
+        Game.instance.player.disablePointerMoveEvents = true
+      }
       UI.instance.floatingStatBars.setVisible(true)
       UI.instance.floatingStatBars.selectCurrPartyMember(target)
       // Play animation for basic attack
@@ -116,7 +118,6 @@ export class BasicAttackAction extends Action {
         .setOrigin(0, 0.5)
         .setVisible(true)
         .setDepth(target.sprite.depth + 1)
-
       let animName = 'slash'
       if (this.source.animOverrides[ActionNames.BASIC_ATTACK]) {
         animName = this.source.animOverrides[ActionNames.BASIC_ATTACK]
@@ -138,8 +139,8 @@ export class BasicAttackAction extends Action {
             if (this.source.side === Side.PLAYER) {
               const playerPartyMember = this.source as PlayerPartyMember
               playerPartyMember.goBackToIdle()
+              UI.instance.endTurnButton.setVisible(false)
             }
-            UI.instance.endTurnButton.setVisible(false)
             UINumber.createNumber(
               `-${damage}`,
               Game.instance,
@@ -149,15 +150,16 @@ export class BasicAttackAction extends Action {
               () => {
                 if (this.source.side === Side.PLAYER) {
                   Game.instance.player.disablePointerMoveEvents = false
-                  UI.instance.floatingStatBars.setVisible(false)
+                  UI.instance.endTurnButton.setVisible(true)
                 }
                 this.processingAttack = false
-
-                // Check if target has died
+                UI.instance.floatingStatBars.setVisible(false)
                 if (target.currHealth <= 0) {
                   Game.instance.handleDeath(target)
                 }
-                UI.instance.endTurnButton.setVisible(true)
+                if (onComplete) {
+                  onComplete()
+                }
               }
             )
           }

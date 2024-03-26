@@ -1,4 +1,6 @@
 import Game from '../../scenes/Game'
+import { ActionNames } from '../actions/ActionNames'
+import { BasicAttackAction } from '../actions/BasicAttackAction'
 import { PartyController, PartyControllerConfig } from './PartyController'
 import { PartyMember } from './PartyMember'
 
@@ -17,8 +19,34 @@ export class CPU extends PartyController {
         closestSquareToEnemy.col
       )
       currPartyMember.moveToPosition(worldXY.x, worldXY.y, () => {
-        this.game.endCurrPartyMemberTurn()
+        this.handleAction(currPartyMember)
       })
+    }
+  }
+
+  handleAction(partyMember: PartyMember) {
+    const attackableTargets = this.game.player.allPartyMembers.filter((pm) => {
+      const distance = this.game.map.getTileDistance(
+        pm.sprite.x,
+        pm.sprite.y,
+        partyMember.sprite.x,
+        partyMember.sprite.y
+      )
+      return distance <= BasicAttackAction.ATTACK_RANGE && pm.currHealth > 0
+    })
+    if (attackableTargets.length == 0) {
+      this.game.endCurrPartyMemberTurn()
+    } else {
+      const sortedByHealth = attackableTargets.sort((a, b) => {
+        return a.currHealth - b.currHealth
+      })
+      const lowestHealthEntity = sortedByHealth[0]
+      const attackAction = partyMember.actions[ActionNames.BASIC_ATTACK]
+      if (attackAction) {
+        attackAction.execute(lowestHealthEntity, () => {
+          this.game.endCurrPartyMemberTurn()
+        })
+      }
     }
   }
 
