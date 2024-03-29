@@ -20,6 +20,9 @@ export class Preload extends Phaser.Scene {
     // Icons
     this.load.image('sword-icon', 'icons/sword.png')
 
+    // Objects
+    this.load.image('arrow', 'objects/arrow.png')
+
     // Animations
     this.load.atlas('slash', 'animations/slash.png', 'animations/slash.json')
     this.load.atlas('bonk', 'animations/bonk.png', 'animations/bonk.json')

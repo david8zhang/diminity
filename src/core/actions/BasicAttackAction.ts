@@ -49,38 +49,10 @@ export class BasicAttackAction extends Action {
       this.source.sprite.x,
       this.source.sprite.y
     )
-    const queue = [{ row, col }]
-    const seen = new Set<string>()
-    const directions = [
-      [0, 1],
-      [0, -1],
-      [1, 0],
-      [-1, 0],
-    ]
-    const targetableSquares: { row: number; col: number }[] = []
-    let distance = 0
-    while (queue.length > 0 && distance <= BasicAttackAction.ATTACK_RANGE) {
-      const queueSize = queue.length
-      for (let i = 0; i < queueSize; i++) {
-        const cell = queue.shift()
-        if (cell) {
-          targetableSquares.push(cell)
-          directions.forEach((dir) => {
-            const newRow = dir[0] + cell.row
-            const newCol = dir[1] + cell.col
-            if (
-              !seen.has(`${newRow},${newCol}`) &&
-              Game.instance.map.isRowColWithinBounds(newRow, newCol) &&
-              Game.instance.map.isValidGroundTile(newRow, newCol)
-            ) {
-              seen.add(`${newRow},${newCol}`)
-              queue.push({ row: newRow, col: newCol })
-            }
-          })
-        }
-      }
-      distance++
-    }
+    const targetableSquares = Game.instance.map.getAllValidSquaresWithinRange(
+      { row, col },
+      BasicAttackAction.ATTACK_RANGE
+    )
     return targetableSquares.filter((ms) => {
       const { x, y } = Game.instance.map.getWorldPositionForRowCol(ms.row, ms.col)
       const partyMemberAtPosition = Game.instance.getPartyMemberAtPosition(x, y)
@@ -132,7 +104,7 @@ export class BasicAttackAction extends Action {
         .on(Phaser.Animations.Events.ANIMATION_UPDATE, (_, frame) => {
           if (frame.index == 3) {
             const damage = this.calculateDamage()
-            target.decreaseHealth(damage)
+            target.takePhysicalDamage(damage)
             UI.instance.floatingStatBars.displayDamage(target)
             Game.instance.cameras.main.shake(150, 0.001)
             target.sprite.setTintFill(0xff0000)

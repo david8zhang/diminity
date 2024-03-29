@@ -160,4 +160,44 @@ export class Map {
     layer.setCollisionByExclusion([-1])
     return layer
   }
+
+  getAllValidSquaresWithinRange(
+    startingPos: { row: number; col: number },
+    range: number
+  ): { row: number; col: number }[] {
+    const { row, col } = startingPos
+    const queue = [{ row, col }]
+    const seen = new Set<string>()
+    const directions = [
+      [0, 1],
+      [0, -1],
+      [1, 0],
+      [-1, 0],
+    ]
+    const squares: { row: number; col: number }[] = []
+    let distance = 0
+    while (queue.length > 0 && distance <= range) {
+      const queueSize = queue.length
+      for (let i = 0; i < queueSize; i++) {
+        const cell = queue.shift()
+        if (cell) {
+          squares.push(cell)
+          directions.forEach((dir) => {
+            const newRow = dir[0] + cell.row
+            const newCol = dir[1] + cell.col
+            if (
+              !seen.has(`${newRow},${newCol}`) &&
+              this.isRowColWithinBounds(newRow, newCol) &&
+              this.isValidGroundTile(newRow, newCol)
+            ) {
+              seen.add(`${newRow},${newCol}`)
+              queue.push({ row: newRow, col: newCol })
+            }
+          })
+        }
+      }
+      distance++
+    }
+    return squares
+  }
 }

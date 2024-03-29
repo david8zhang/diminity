@@ -29,11 +29,11 @@ export class Constants {
       maxHealth: 20,
       maxPhysicalArmor: 5,
       maxMagicArmor: 20,
-      apCostPerSquareMoved: 0.5,
+      apCostPerSquareMoved: 0.1,
       texture: 'wizard',
       actionPointPerTurn: 4,
       strength: 2,
-      initiative: 2,
+      initiative: 4,
       animOverrides: {
         [ActionNames.BASIC_ATTACK]: 'bonk',
       },
@@ -71,6 +71,7 @@ export class Constants {
       animOverrides: {
         [ActionNames.BASIC_ATTACK]: 'stab',
       },
+      actionNames: [ActionNames.PIERCING_SHOT],
     },
   ]
 

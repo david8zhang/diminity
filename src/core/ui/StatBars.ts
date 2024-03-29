@@ -1,7 +1,6 @@
 import { UI } from '../../scenes/UI'
 import { Constants } from '../Constants'
 import { PartyMember } from '../controller/PartyMember'
-import { UINumber } from './UINumber'
 import { UIValueBar } from './UIValueBar'
 
 export interface StatBarConfig {
@@ -113,6 +112,9 @@ export class StatBars {
       this.physicalArmor.setVisible(false)
       this.physicalArmorText.setVisible(false)
     } else {
+      this.physicalArmorText.setColor(
+        partyMember.currPhysicalArmor < partyMember.maxPhysicalArmor / 2 ? 'white' : 'black'
+      )
       this.physicalArmor.setVisible(true)
       this.physicalArmorText.setVisible(true)
       this.physicalArmor.setCurrValue(partyMember.currPhysicalArmor)
@@ -130,6 +132,15 @@ export class StatBars {
   displayDamage(partyMember: PartyMember) {
     this.healthBar.setCurrValue(partyMember.currHealth)
     this.healthText.setText(`${partyMember.currHealth}/${partyMember.maxHealth}`)
+    this.physicalArmor.setCurrValue(partyMember.currPhysicalArmor)
+    this.physicalArmorText.setText(
+      `${partyMember.currPhysicalArmor}/${partyMember.maxPhysicalArmor}`
+    )
+    this.physicalArmorText.setColor(
+      partyMember.currPhysicalArmor < partyMember.maxPhysicalArmor / 2 ? 'white' : 'black'
+    )
+    this.magicArmor.setCurrValue(partyMember.currMagicArmor)
+    this.magicArmorText.setText(`${partyMember.currMagicArmor}/${partyMember.maxMagicArmor}`)
   }
 
   setVisible(isVisible: boolean) {

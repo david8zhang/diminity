@@ -1,9 +1,11 @@
 import { PartyMember } from '../controller/PartyMember'
 import { ActionNames } from './ActionNames'
 import { BasicAttackAction } from './BasicAttackAction'
+import { PiercingShot } from './PiercingShot'
 
 export const ACTION_MAPPING = {
   [ActionNames.BASIC_ATTACK]: BasicAttackAction,
+  [ActionNames.PIERCING_SHOT]: PiercingShot,
 }
 
 export class ActionCreator {

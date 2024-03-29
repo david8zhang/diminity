@@ -15,7 +15,7 @@ export interface PartyMemberConfig {
   side: Side
   actionNames?: ActionNames[]
   animOverrides?: {
-    [key in ActionNames]: any
+    [key in ActionNames]?: any
   }
 
   // Stats
@@ -118,44 +118,26 @@ export class PartyMember {
     return this.currActionPoints / this.apCostPerSquareMoved
   }
 
-  decreaseHealth(damage: number) {
-    this.currHealth = Math.max(0, this.currHealth - damage)
+  takePhysicalDamage(damage: number) {
+    if (damage > this.currPhysicalArmor) {
+      this.currHealth = Math.max(0, this.currHealth - (damage - this.currPhysicalArmor))
+    }
+    this.currPhysicalArmor = Math.max(0, this.currPhysicalArmor - damage)
+  }
+
+  takeMagicDamage(damage: number) {
+    if (damage > this.currMagicArmor) {
+      this.currHealth = Math.max(0, this.currHealth - (damage - this.currMagicArmor))
+    }
+    this.currMagicArmor = Math.max(0, this.currMagicArmor - damage)
   }
 
   getMoveableSquares(): { row: number; col: number }[] {
     const { row, col } = this.game.map.getRowColForWorldPosition(this.sprite.x, this.sprite.y)
-    const queue = [{ row, col }]
-    const seen = new Set<string>()
-    const directions = [
-      [0, 1],
-      [0, -1],
-      [1, 0],
-      [-1, 0],
-    ]
-    const moveableSquares: { row: number; col: number }[] = []
-    let distance = 0
-    while (queue.length > 0 && distance <= this.moveRange) {
-      const queueSize = queue.length
-      for (let i = 0; i < queueSize; i++) {
-        const cell = queue.shift()
-        if (cell) {
-          moveableSquares.push(cell)
-          directions.forEach((dir) => {
-            const newRow = dir[0] + cell.row
-            const newCol = dir[1] + cell.col
-            if (
-              !seen.has(`${newRow},${newCol}`) &&
-              this.game.map.isRowColWithinBounds(newRow, newCol) &&
-              this.game.map.isValidGroundTile(newRow, newCol)
-            ) {
-              seen.add(`${newRow},${newCol}`)
-              queue.push({ row: newRow, col: newCol })
-            }
-          })
-        }
-      }
-      distance++
-    }
+    const moveableSquares = this.game.map.getAllValidSquaresWithinRange(
+      { row, col },
+      this.moveRange
+    )
     return moveableSquares.filter((ms) => {
       const { x, y } = this.game.map.getWorldPositionForRowCol(ms.row, ms.col)
       return this.canMoveToPosition(x, y)
