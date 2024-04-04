@@ -26,6 +26,7 @@ export interface PartyMemberConfig {
   apCostPerSquareMoved: number
   initiative: number
   strength: number
+  dexterity: number
 }
 
 export class PartyMember {
@@ -46,6 +47,7 @@ export class PartyMember {
   public apCostPerSquareMoved: number = 0
   public initiative: number = 0
   public strength: number = 0
+  public dexterity: number = 0
   public side: Side
   public actions: { [key in ActionNames]?: Action }
   public animOverrides: { [key in ActionNames]?: any } = {}
@@ -73,6 +75,7 @@ export class PartyMember {
       .sprite(position.x, position.y, config.texture)
       .setInteractive({ useHandCursor: 'true' })
     this.strength = config.strength
+    this.dexterity = config.dexterity
     let allActions = [ActionNames.BASIC_ATTACK]
     if (config.actionNames) {
       allActions = allActions.concat(config.actionNames)

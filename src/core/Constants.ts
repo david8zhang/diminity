@@ -5,6 +5,11 @@ export enum Side {
   PLAYER,
 }
 
+export enum DamageType {
+  MAGIC,
+  ARMOR,
+}
+
 export class Constants {
   public static WINDOW_WIDTH = 800
   public static WINDOW_HEIGHT = 800
@@ -33,6 +38,7 @@ export class Constants {
       texture: 'wizard',
       actionPointPerTurn: 4,
       strength: 2,
+      dexterity: 3,
       initiative: 4,
       animOverrides: {
         [ActionNames.BASIC_ATTACK]: 'bonk',
@@ -50,6 +56,7 @@ export class Constants {
       apCostPerSquareMoved: 0.5,
       actionPointPerTurn: 3,
       strength: 4,
+      dexterity: 2,
       initiative: 3,
       animOverrides: {
         [ActionNames.BASIC_ATTACK]: 'slash',
@@ -61,12 +68,13 @@ export class Constants {
         col: 27,
       },
       maxHealth: 25,
-      maxPhysicalArmor: 15,
+      maxPhysicalArmor: 10,
       maxMagicArmor: 10,
       texture: 'rogue',
       apCostPerSquareMoved: 0.1,
       actionPointPerTurn: 4,
       strength: 3,
+      dexterity: 4,
       initiative: 4,
       animOverrides: {
         [ActionNames.BASIC_ATTACK]: 'stab',

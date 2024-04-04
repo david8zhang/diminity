@@ -1,7 +1,8 @@
 import Game from '../../scenes/Game'
 import { UI } from '../../scenes/UI'
-import { Side } from '../Constants'
+import { DamageType, Side } from '../Constants'
 import { PartyMember } from '../controller/PartyMember'
+import { PlayerPartyMember } from '../controller/PlayerPartyMember'
 import { Action } from './Action'
 import { ActionNames } from './ActionNames'
 
@@ -53,6 +54,10 @@ export class PiercingShot extends Action {
     })
   }
 
+  public calculateDamage() {
+    return this.source.dexterity * Phaser.Math.Between(1, 4)
+  }
+
   public execute(target: PartyMember, onComplete?: Function): void {
     if (!this.processingAttack) {
       this.processingAttack = true
@@ -85,11 +90,27 @@ export class PiercingShot extends Action {
         duration: (distance / 5) * 100,
         onComplete: () => {
           this.arrowSprite.setVisible(false)
-          target.sprite.setTint(0xff0000)
+          const damage = this.calculateDamage()
+          this.dealDamage(target, damage, DamageType.ARMOR, () => {
+            this.processingAttack = false
+            this.arrowSprite.setVisible(false)
+            UI.instance.floatingStatBars.setVisible(false)
+            if (this.source.side === Side.PLAYER) {
+              Game.instance.player.disablePointerMoveEvents = false
+              UI.instance.endTurnButton.setVisible(true)
+            }
+            if (onComplete) {
+              onComplete()
+            }
+          })
           Game.instance.time.delayedCall(100, () => {
             target.sprite.clearTint()
           })
-          Game.instance.cameras.main.shake(150, 0.001)
+          if (this.source.side === Side.PLAYER) {
+            const playerPartyMember = this.source as PlayerPartyMember
+            playerPartyMember.goBackToIdle()
+            UI.instance.endTurnButton.setVisible(false)
+          }
         },
       })
     }

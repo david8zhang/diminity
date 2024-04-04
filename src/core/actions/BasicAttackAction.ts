@@ -1,6 +1,6 @@
 import Game from '../../scenes/Game'
 import { UI } from '../../scenes/UI'
-import { Side } from '../Constants'
+import { DamageType, Side } from '../Constants'
 import { PartyMember } from '../controller/PartyMember'
 import { PlayerPartyMember } from '../controller/PlayerPartyMember'
 import { UINumber } from '../ui/UINumber'
@@ -104,36 +104,22 @@ export class BasicAttackAction extends Action {
         .on(Phaser.Animations.Events.ANIMATION_UPDATE, (_, frame) => {
           if (frame.index == 3) {
             const damage = this.calculateDamage()
-            target.takePhysicalDamage(damage)
-            UI.instance.floatingStatBars.displayDamage(target)
-            Game.instance.cameras.main.shake(150, 0.001)
-            target.sprite.setTintFill(0xff0000)
+            this.dealDamage(target, damage, DamageType.ARMOR, () => {
+              this.processingAttack = false
+              UI.instance.floatingStatBars.setVisible(false)
+              if (this.source.side === Side.PLAYER) {
+                Game.instance.player.disablePointerMoveEvents = false
+                UI.instance.endTurnButton.setVisible(true)
+              }
+              if (onComplete) {
+                onComplete()
+              }
+            })
             if (this.source.side === Side.PLAYER) {
               const playerPartyMember = this.source as PlayerPartyMember
               playerPartyMember.goBackToIdle()
               UI.instance.endTurnButton.setVisible(false)
             }
-            UINumber.createNumber(
-              `-${damage}`,
-              Game.instance,
-              target.sprite.x,
-              target.sprite.y,
-              'white',
-              () => {
-                if (this.source.side === Side.PLAYER) {
-                  Game.instance.player.disablePointerMoveEvents = false
-                  UI.instance.endTurnButton.setVisible(true)
-                }
-                this.processingAttack = false
-                UI.instance.floatingStatBars.setVisible(false)
-                if (target.currHealth <= 0) {
-                  Game.instance.handleDeath(target)
-                }
-                if (onComplete) {
-                  onComplete()
-                }
-              }
-            )
           }
         })
     }
