@@ -7,8 +7,8 @@ import { Action } from './Action'
 import { ActionNames } from './ActionNames'
 
 export class PiercingShot extends Action {
-  private static ATTACK_RANGE = 100
-  private static AP_COST = 0
+  private static ATTACK_RANGE = 8
+  private static AP_COST = 3
   private static TILE_HIGHLIGHT_COLOR = 0xff7979
   private processingAttack: boolean = false
   private arrowSprite: Phaser.GameObjects.Sprite

@@ -39,10 +39,11 @@ export class Constants {
       actionPointPerTurn: 4,
       strength: 2,
       dexterity: 3,
-      initiative: 4,
+      initiative: 3,
       animOverrides: {
         [ActionNames.BASIC_ATTACK]: 'bonk',
       },
+      actionNames: [ActionNames.FIREBALL],
     },
     {
       rowColPos: {

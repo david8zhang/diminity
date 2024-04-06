@@ -100,6 +100,13 @@ export class Map {
     }
   }
 
+  clearTintForTiles(tiles: { row: number; col: number }[]) {
+    tiles.forEach((tile) => {
+      const worldXY = this.getWorldPositionForRowCol(tile.row, tile.col)
+      this.clearTint(worldXY.x, worldXY.y)
+    })
+  }
+
   clearTint(worldX: number, worldY: number, alpha: number = 1) {
     const tile = this.tilemap.getTileAtWorldXY(
       worldX,
@@ -159,6 +166,40 @@ export class Map {
     layer.setOrigin(0)
     layer.setCollisionByExclusion([-1])
     return layer
+  }
+
+  private isRowColWithinCircle(
+    center: { row: number; col: number },
+    point: { row: number; col: number },
+    radius: number
+  ) {
+    const dx = center.col - point.col
+    const dy = center.row - point.row
+    const squaredDistance = dx * dx + dy * dy
+    return squaredDistance <= radius * radius && this.isRowColWithinBounds(point.row, point.col)
+  }
+
+  getAllTilesWithinCircleRadius(centerRow: number, centerCol: number, radius: number) {
+    const top = Math.ceil(centerRow - radius)
+    const bottom = Math.floor(centerRow + radius)
+    const left = Math.ceil(centerCol - radius)
+    const right = Math.floor(centerCol + radius)
+
+    const tiles: { row: number; col: number }[] = []
+
+    for (let y = top; y <= bottom; y++) {
+      for (let x = left; x <= right; x++) {
+        if (
+          this.isRowColWithinCircle({ row: centerRow, col: centerCol }, { row: y, col: x }, radius)
+        ) {
+          tiles.push({
+            row: y,
+            col: x,
+          })
+        }
+      }
+    }
+    return tiles
   }
 
   getAllValidSquaresWithinRange(

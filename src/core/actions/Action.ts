@@ -17,9 +17,20 @@ export abstract class Action {
     this.source = source
   }
   public abstract handleClick(worldX: number, worldY: number): void
+
   public handleHover(worldX: number, worldY: number) {
-    return
+    if (Game.instance.map.isWorldXYWithinBounds(worldX, worldY)) {
+      const partyMember = Game.instance.getPartyMemberAtPosition(worldX, worldY)
+      if (partyMember && this.isValidAttackTarget(partyMember)) {
+        UI.instance.actionPointDisplay.displayActionPotentialPointCost(this.source, this.apCost)
+      } else {
+        UI.instance.actionPointDisplay.showAvailableActionPoints(this.source)
+      }
+    }
   }
+
+  public abstract isValidAttackTarget(partyMember: PartyMember): boolean
+
   public abstract execute(target: PartyMember[] | PartyMember, onComplete?: Function): void
   public abstract onSelected(): void
 
