@@ -118,7 +118,7 @@ export class PartyMember {
   }
 
   get moveRange() {
-    return this.currActionPoints / this.apCostPerSquareMoved
+    return Math.ceil(this.currActionPoints / this.apCostPerSquareMoved) - 0.5
   }
 
   takePhysicalDamage(damage: number) {
@@ -137,10 +137,7 @@ export class PartyMember {
 
   getMoveableSquares(): { row: number; col: number }[] {
     const { row, col } = this.game.map.getRowColForWorldPosition(this.sprite.x, this.sprite.y)
-    const moveableSquares = this.game.map.getAllValidSquaresWithinRange(
-      { row, col },
-      this.moveRange
-    )
+    const moveableSquares = this.game.map.getAllTilesWithinCircleRadius(row, col, this.moveRange)
     return moveableSquares.filter((ms) => {
       const { x, y } = this.game.map.getWorldPositionForRowCol(ms.row, ms.col)
       return this.canMoveToPosition(x, y)

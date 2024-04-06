@@ -1,17 +1,18 @@
 import Game from '../../scenes/Game'
 import { UI } from '../../scenes/UI'
-import { DamageType, Side } from '../Constants'
+import { Constants, DamageType, Side } from '../Constants'
 import { PartyMember } from '../controller/PartyMember'
 import { PlayerPartyMember } from '../controller/PlayerPartyMember'
 import { Action } from './Action'
 import { ActionNames } from './ActionNames'
 
 export class PiercingShot extends Action {
-  private static ATTACK_RANGE = 8
+  private static ATTACK_RANGE = 8.5
   private static AP_COST = 3
-  private static TILE_HIGHLIGHT_COLOR = 0xff7979
+  private static TILE_HIGHLIGHT_COLOR = 0xff0000
   private processingAttack: boolean = false
   private arrowSprite: Phaser.GameObjects.Sprite
+  private attackRangeTiles: Phaser.GameObjects.Rectangle[] = []
 
   constructor(partyMember: PartyMember) {
     super(ActionNames.PIERCING_SHOT, 'piercing-shot', partyMember)
@@ -38,19 +39,26 @@ export class PiercingShot extends Action {
     return tileDistance <= PiercingShot.ATTACK_RANGE && partyMember.side !== this.source.side
   }
 
-  public getTargetableSquares() {
-    const { row, col } = Game.instance.map.getRowColForWorldPosition(
+  public getAttackRangeTiles() {
+    const worldRowCol = Game.instance.map.getRowColForWorldPosition(
       this.source.sprite.x,
       this.source.sprite.y
     )
-    const targetableSquares = Game.instance.map.getAllValidSquaresWithinRange(
-      { row, col },
+    const tiles = Game.instance.map.getAllTilesWithinCircleRadius(
+      worldRowCol.row,
+      worldRowCol.col,
       PiercingShot.ATTACK_RANGE
     )
-    return targetableSquares.filter((ms) => {
-      const { x, y } = Game.instance.map.getWorldPositionForRowCol(ms.row, ms.col)
-      const partyMemberAtPosition = Game.instance.getPartyMemberAtPosition(x, y)
-      return !partyMemberAtPosition || partyMemberAtPosition.side !== this.source.side
+    const sourceRowCol = Game.instance.map.getRowColForWorldPosition(
+      this.source.sprite.x,
+      this.source.sprite.y
+    )
+    const isAtPosition = (row: number, col: number) => {
+      return sourceRowCol.row == row && sourceRowCol.col == col
+    }
+
+    return tiles.filter((t) => {
+      return Game.instance.map.isValidGroundTile(t.row, t.col) && !isAtPosition(t.row, t.col)
     })
   }
 
@@ -115,8 +123,29 @@ export class PiercingShot extends Action {
       })
     }
   }
+
+  public onDeselect() {
+    this.attackRangeTiles.forEach((rect) => {
+      rect.destroy()
+    })
+  }
+
   public onSelected(): void {
-    const targetableSquares = this.getTargetableSquares()
-    Game.instance.map.tintTiles(targetableSquares, PiercingShot.TILE_HIGHLIGHT_COLOR)
+    const attackableTiles = this.getAttackRangeTiles()
+    this.attackRangeTiles.forEach((rect) => {
+      rect.destroy()
+    })
+    attackableTiles.forEach((position) => {
+      const worldXY = Game.instance.map.getWorldPositionForRowCol(position.row, position.col)
+      const newRect = Game.instance.add.rectangle(
+        worldXY.x,
+        worldXY.y,
+        Constants.CELL_SIZE,
+        Constants.CELL_SIZE,
+        PiercingShot.TILE_HIGHLIGHT_COLOR,
+        0.4
+      )
+      this.attackRangeTiles.push(newRect)
+    })
   }
 }

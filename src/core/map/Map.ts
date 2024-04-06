@@ -51,7 +51,7 @@ export class Map {
   getTileDistance(x1: number, y1: number, x2: number, y2: number) {
     const point1 = this.getRowColForWorldPosition(x1, y1)
     const point2 = this.getRowColForWorldPosition(x2, y2)
-    return Phaser.Math.Distance.Snake(point1.col, point1.row, point2.col, point2.row)
+    return Phaser.Math.Distance.Between(point1.col, point1.row, point2.col, point2.row)
   }
 
   highlightTiles(tilePositions: { row: number; col: number }[]) {

@@ -33,6 +33,9 @@ export abstract class Action {
 
   public abstract execute(target: PartyMember[] | PartyMember, onComplete?: Function): void
   public abstract onSelected(): void
+  public onDeselect(): void {
+    return
+  }
 
   public dealDamage(
     target: PartyMember,

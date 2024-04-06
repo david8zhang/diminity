@@ -52,6 +52,7 @@ export class PlayerPartyMember extends PartyMember {
   }
 
   moveToPosition(worldX: number, worldY: number) {
+    this.game.map.dehighlightTiles()
     UI.instance.endTurnButton.setVisible(false)
     this.actionState = ActionState.MOVING
     super.moveToPosition(worldX, worldY, () => {
@@ -63,6 +64,9 @@ export class PlayerPartyMember extends PartyMember {
   goBackToIdle() {
     this.actionState = ActionState.IDLE
     this.resetHighlight()
+    if (this.selectedAction) {
+      this.selectedAction.onDeselect()
+    }
     this.selectedAction = null
     UI.instance.actionMenu.highlightSelectedAction('')
     UI.instance.actionPointDisplay.showAvailableActionPoints(this)

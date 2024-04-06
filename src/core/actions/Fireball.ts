@@ -1,20 +1,21 @@
 import Game from '../../scenes/Game'
+import { Constants } from '../Constants'
 import { PartyMember } from '../controller/PartyMember'
 import { Action } from './Action'
 import { ActionNames } from './ActionNames'
 
 export class Fireball extends Action {
   private static ATTACK_RANGE = 8.5
-  private static AOE_RADIUS = 3.5
+  private static AOE_RADIUS = 2.5
   private static AP_COST = 4
-  private static ATTACK_RANGE_HIGHLIGHT_COLOR = 0xff7979
+  private static ATTACK_RANGE_HIGHLIGHT_COLOR = 0xff0000
   private static AOE_HIGHLIGHT_COLOR = 0xffbf00
 
   private processingAttack: boolean = false
   private fireballSprite!: Phaser.GameObjects.Sprite
   private showAOERange: boolean = false
-  private AOETiles: { row: number; col: number }[] = []
-  private attackRangeTiles: { row: number; col: number }[] = []
+  private AOETiles: Phaser.GameObjects.Rectangle[] = []
+  private attackRangeTiles: Phaser.GameObjects.Rectangle[] = []
 
   constructor(partyMember: PartyMember) {
     super(ActionNames.FIREBALL, '', partyMember)
@@ -27,16 +28,27 @@ export class Fireball extends Action {
       return
     }
     if (this.showAOERange && this.isWithinAttackRange(worldX, worldY)) {
+      this.AOETiles.forEach((rect) => {
+        rect.destroy()
+      })
       const rowCol = Game.instance.map.getRowColForWorldPosition(worldX, worldY)
-      Game.instance.map.clearTintForTiles(this.AOETiles)
-      this.AOETiles = Game.instance.map.getAllTilesWithinCircleRadius(
+      const tiles = Game.instance.map.getAllTilesWithinCircleRadius(
         rowCol.row,
         rowCol.col,
         Fireball.AOE_RADIUS
       )
-      const attackRangeTiles = this.getAttackRangeTiles()
-      Game.instance.map.tintTiles(attackRangeTiles, Fireball.ATTACK_RANGE_HIGHLIGHT_COLOR)
-      Game.instance.map.tintTiles(this.AOETiles, Fireball.AOE_HIGHLIGHT_COLOR)
+      tiles.forEach((tile) => {
+        const worldXY = Game.instance.map.getWorldPositionForRowCol(tile.row, tile.col)
+        const newRectangle = Game.instance.add.rectangle(
+          worldXY.x,
+          worldXY.y,
+          Constants.CELL_SIZE,
+          Constants.CELL_SIZE,
+          Fireball.AOE_HIGHLIGHT_COLOR,
+          0.5
+        )
+        this.AOETiles.push(newRectangle)
+      })
     }
   }
 
@@ -67,16 +79,50 @@ export class Fireball extends Action {
       this.source.sprite.x,
       this.source.sprite.y
     )
-    return Game.instance.map.getAllTilesWithinCircleRadius(
+    const tiles = Game.instance.map.getAllTilesWithinCircleRadius(
       worldRowCol.row,
       worldRowCol.col,
       Fireball.ATTACK_RANGE
     )
+    const sourceRowCol = Game.instance.map.getRowColForWorldPosition(
+      this.source.sprite.x,
+      this.source.sprite.y
+    )
+    const isAtPosition = (row: number, col: number) => {
+      return sourceRowCol.row == row && sourceRowCol.col == col
+    }
+
+    return tiles.filter((t) => {
+      return Game.instance.map.isValidGroundTile(t.row, t.col) && !isAtPosition(t.row, t.col)
+    })
+  }
+
+  public onDeselect() {
+    this.AOETiles.forEach((rect) => {
+      rect.destroy()
+    })
+    this.attackRangeTiles.forEach((rect) => {
+      rect.destroy()
+    })
   }
 
   public onSelected(): void {
     this.showAOERange = true
-    const attackRangeTiles = this.getAttackRangeTiles()
-    Game.instance.map.tintTiles(attackRangeTiles, Fireball.ATTACK_RANGE_HIGHLIGHT_COLOR)
+    this.attackRangeTiles.forEach((rect) => {
+      rect.destroy()
+    })
+    const attackRangeTilePositions = this.getAttackRangeTiles()
+    attackRangeTilePositions.forEach((position) => {
+      const worldXY = Game.instance.map.getWorldPositionForRowCol(position.row, position.col)
+      const newRect = Game.instance.add.rectangle(
+        worldXY.x,
+        worldXY.y,
+        Constants.CELL_SIZE,
+        Constants.CELL_SIZE,
+        Fireball.ATTACK_RANGE_HIGHLIGHT_COLOR,
+        0.4
+      )
+      this.attackRangeTiles.push(newRect)
+    })
   }
 }
