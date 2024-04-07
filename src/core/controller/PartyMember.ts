@@ -27,6 +27,7 @@ export interface PartyMemberConfig {
   initiative: number
   strength: number
   dexterity: number
+  wisdom: number
 }
 
 export class PartyMember {
@@ -48,6 +49,7 @@ export class PartyMember {
   public initiative: number = 0
   public strength: number = 0
   public dexterity: number = 0
+  public wisdom: number = 0
   public side: Side
   public actions: { [key in ActionNames]?: Action }
   public animOverrides: { [key in ActionNames]?: any } = {}
@@ -76,6 +78,7 @@ export class PartyMember {
       .setInteractive({ useHandCursor: 'true' })
     this.strength = config.strength
     this.dexterity = config.dexterity
+    this.wisdom = config.wisdom
     let allActions = [ActionNames.BASIC_ATTACK]
     if (config.actionNames) {
       allActions = allActions.concat(config.actionNames)

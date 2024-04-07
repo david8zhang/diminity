@@ -22,12 +22,18 @@ export class Preload extends Phaser.Scene {
 
     // Objects
     this.load.image('arrow', 'objects/arrow.png')
+    this.load.image('fireball', 'objects/fireball.png')
 
     // Animations
     this.load.atlas('slash', 'animations/slash.png', 'animations/slash.json')
     this.load.atlas('bonk', 'animations/bonk.png', 'animations/bonk.json')
     this.load.atlas('stab', 'animations/stab.png', 'animations/stab.json')
     this.load.atlas('swipe', 'animations/swipe.png', 'animations/swipe.json')
+    this.load.atlas(
+      'fireball-explosion',
+      'animations/fireball-explosion.png',
+      'animations/fireball-explosion.json'
+    )
   }
 
   create() {

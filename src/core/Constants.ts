@@ -39,6 +39,7 @@ export class Constants {
       actionPointPerTurn: 4,
       strength: 2,
       dexterity: 3,
+      wisdom: 4,
       initiative: 3,
       animOverrides: {
         [ActionNames.BASIC_ATTACK]: 'bonk',
@@ -58,6 +59,7 @@ export class Constants {
       actionPointPerTurn: 3,
       strength: 4,
       dexterity: 2,
+      wisdom: 2,
       initiative: 3,
       animOverrides: {
         [ActionNames.BASIC_ATTACK]: 'slash',
@@ -74,8 +76,9 @@ export class Constants {
       texture: 'rogue',
       apCostPerSquareMoved: 0.4,
       actionPointPerTurn: 4,
-      strength: 3,
+      strength: 2,
       dexterity: 4,
+      wisdom: 3,
       initiative: 4,
       animOverrides: {
         [ActionNames.BASIC_ATTACK]: 'stab',

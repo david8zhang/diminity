@@ -83,6 +83,7 @@ export default class Game extends Phaser.Scene {
     this.generateTurnOrder()
 
     // center on first party member to act
+    this.partyMemberToActIndex = 0
     const partyMemberToAct = this.getPartyMember(this.turnOrder[this.partyMemberToActIndex])
     this.cameras.main.centerOn(partyMemberToAct.sprite.x, partyMemberToAct.sprite.y)
 

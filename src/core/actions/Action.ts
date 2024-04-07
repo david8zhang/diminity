@@ -30,11 +30,33 @@ export abstract class Action {
   }
 
   public abstract isValidAttackTarget(partyMember: PartyMember): boolean
-
   public abstract execute(target: PartyMember[] | PartyMember, onComplete?: Function): void
   public abstract onSelected(): void
   public onDeselect(): void {
     return
+  }
+
+  public getAttackRangeTiles(attackRange: number) {
+    const worldRowCol = Game.instance.map.getRowColForWorldPosition(
+      this.source.sprite.x,
+      this.source.sprite.y
+    )
+    const tiles = Game.instance.map.getAllTilesWithinCircleRadius(
+      worldRowCol.row,
+      worldRowCol.col,
+      attackRange
+    )
+    const sourceRowCol = Game.instance.map.getRowColForWorldPosition(
+      this.source.sprite.x,
+      this.source.sprite.y
+    )
+    const isAtPosition = (row: number, col: number) => {
+      return sourceRowCol.row == row && sourceRowCol.col == col
+    }
+
+    return tiles.filter((t) => {
+      return Game.instance.map.isValidGroundTile(t.row, t.col) && !isAtPosition(t.row, t.col)
+    })
   }
 
   public dealDamage(

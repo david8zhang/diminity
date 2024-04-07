@@ -39,29 +39,6 @@ export class PiercingShot extends Action {
     return tileDistance <= PiercingShot.ATTACK_RANGE && partyMember.side !== this.source.side
   }
 
-  public getAttackRangeTiles() {
-    const worldRowCol = Game.instance.map.getRowColForWorldPosition(
-      this.source.sprite.x,
-      this.source.sprite.y
-    )
-    const tiles = Game.instance.map.getAllTilesWithinCircleRadius(
-      worldRowCol.row,
-      worldRowCol.col,
-      PiercingShot.ATTACK_RANGE
-    )
-    const sourceRowCol = Game.instance.map.getRowColForWorldPosition(
-      this.source.sprite.x,
-      this.source.sprite.y
-    )
-    const isAtPosition = (row: number, col: number) => {
-      return sourceRowCol.row == row && sourceRowCol.col == col
-    }
-
-    return tiles.filter((t) => {
-      return Game.instance.map.isValidGroundTile(t.row, t.col) && !isAtPosition(t.row, t.col)
-    })
-  }
-
   public calculateDamage() {
     return this.source.dexterity * Phaser.Math.Between(1, 4)
   }
@@ -131,7 +108,7 @@ export class PiercingShot extends Action {
   }
 
   public onSelected(): void {
-    const attackableTiles = this.getAttackRangeTiles()
+    const attackableTiles = this.getAttackRangeTiles(PiercingShot.ATTACK_RANGE)
     this.attackRangeTiles.forEach((rect) => {
       rect.destroy()
     })

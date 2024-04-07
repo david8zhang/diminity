@@ -1,6 +1,6 @@
 import Game from '../../scenes/Game'
 import { UI } from '../../scenes/UI'
-import { DamageType, Side } from '../Constants'
+import { Constants, DamageType, Side } from '../Constants'
 import { PartyMember } from '../controller/PartyMember'
 import { PlayerPartyMember } from '../controller/PlayerPartyMember'
 import { UINumber } from '../ui/UINumber'
@@ -8,11 +8,12 @@ import { Action } from './Action'
 import { ActionNames } from './ActionNames'
 
 export class BasicAttackAction extends Action {
-  public static ATTACK_RANGE = 2
+  public static ATTACK_RANGE = 2.5
   public static AP_COST = 2
-  private static TILE_HIGHLIGHT_COLOR = 0xff7979
+  private static ATTACK_RANGE_HIGHLIGHT_COLOR = 0xff0000
   private processingAttack: boolean = false
   private animSprite: Phaser.GameObjects.Sprite
+  private attackRangeTiles: Phaser.GameObjects.Rectangle[] = []
 
   constructor(partyMember: PartyMember) {
     super(ActionNames.BASIC_ATTACK, 'sword-icon', partyMember)
@@ -39,24 +40,28 @@ export class BasicAttackAction extends Action {
     }
   }
 
-  public onSelected() {
-    const targetableSquares = this.getTargetableSquares()
-    Game.instance.map.tintTiles(targetableSquares, BasicAttackAction.TILE_HIGHLIGHT_COLOR)
+  public onDeselect() {
+    this.attackRangeTiles.forEach((rect) => {
+      rect.destroy()
+    })
   }
 
-  public getTargetableSquares() {
-    const { row, col } = Game.instance.map.getRowColForWorldPosition(
-      this.source.sprite.x,
-      this.source.sprite.y
-    )
-    const targetableSquares = Game.instance.map.getAllValidSquaresWithinRange(
-      { row, col },
-      BasicAttackAction.ATTACK_RANGE
-    )
-    return targetableSquares.filter((ms) => {
-      const { x, y } = Game.instance.map.getWorldPositionForRowCol(ms.row, ms.col)
-      const partyMemberAtPosition = Game.instance.getPartyMemberAtPosition(x, y)
-      return !partyMemberAtPosition || partyMemberAtPosition.side !== this.source.side
+  public onSelected() {
+    this.attackRangeTiles.forEach((rect) => {
+      rect.destroy()
+    })
+    const attackRangeTilePositions = this.getAttackRangeTiles(BasicAttackAction.ATTACK_RANGE)
+    attackRangeTilePositions.forEach((position) => {
+      const worldXY = Game.instance.map.getWorldPositionForRowCol(position.row, position.col)
+      const newRect = Game.instance.add.rectangle(
+        worldXY.x,
+        worldXY.y,
+        Constants.CELL_SIZE,
+        Constants.CELL_SIZE,
+        BasicAttackAction.ATTACK_RANGE_HIGHLIGHT_COLOR,
+        0.4
+      )
+      this.attackRangeTiles.push(newRect)
     })
   }
 
