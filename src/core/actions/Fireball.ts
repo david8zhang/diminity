@@ -3,6 +3,7 @@ import { UI } from '../../scenes/UI'
 import { Constants, DamageType, Side } from '../Constants'
 import { PartyMember } from '../controller/PartyMember'
 import { PlayerPartyMember } from '../controller/PlayerPartyMember'
+import { BurningGroundEffect } from '../effects/BurningGroundEffect'
 import { Action } from './Action'
 import { ActionNames } from './ActionNames'
 
@@ -24,6 +25,7 @@ export class Fireball extends Action {
     super(ActionNames.FIREBALL, '', partyMember)
     this.apCost = Fireball.AP_COST
     this.fireballSprite = Game.instance.add.sprite(0, 0, 'fireball').setVisible(false).setScale(1.5)
+    this.range = Fireball.ATTACK_RANGE
   }
 
   public handleHover(worldX: number, worldY: number): void {
@@ -64,16 +66,6 @@ export class Fireball extends Action {
     }
   }
 
-  public isValidAttackTarget(partyMember: PartyMember): boolean {
-    const tileDistance = Game.instance.map.getTileDistance(
-      this.source.sprite.x,
-      this.source.sprite.y,
-      partyMember.sprite.x,
-      partyMember.sprite.y
-    )
-    return tileDistance <= Fireball.ATTACK_RANGE && partyMember.side !== this.source.side
-  }
-
   public calculateDamage() {
     return this.source.wisdom * Phaser.Math.Between(1, 2)
   }
@@ -90,7 +82,16 @@ export class Fireball extends Action {
       }
       UI.instance.floatingStatBars.setVisible(true)
       UI.instance.floatingStatBars.selectCurrPartyMember(target)
-      this.fireballSprite.setVisible(true).setPosition(this.source.sprite.x, this.source.sprite.y)
+      Game.instance.postFxPlugin.add(this.fireballSprite, {
+        thickness: 2,
+        outlineColor: 0xffff00,
+      })
+
+      this.fireballSprite
+        .setVisible(true)
+        .setPosition(this.source.sprite.x, this.source.sprite.y)
+        .setScale(1.5)
+        .setTexture('fireball')
 
       const targetX = target.sprite.x
       const targetY = target.sprite.y
@@ -99,12 +100,6 @@ export class Fireball extends Action {
 
       const angle = Phaser.Math.Angle.Between(sourceX, sourceY, targetX, targetY)
       this.fireballSprite.setRotation(angle)
-
-      Game.instance.postFxPlugin.add(this.fireballSprite, {
-        thickness: 2,
-        outlineColor: 0xffff00,
-      })
-
       const distance = Game.instance.map.getTileDistance(sourceX, sourceY, targetX, targetY)
       Game.instance.tweens.add({
         targets: [this.fireballSprite],
@@ -118,11 +113,28 @@ export class Fireball extends Action {
         },
         duration: (distance / 5) * 200,
         onComplete: () => {
-          this.fireballSprite.setVisible(false)
+          Game.instance.postFxPlugin.remove(this.fireballSprite)
+          Game.instance.postFxPlugin.add(this.fireballSprite, {
+            thickness: 2,
+            outlineColor: 0xffbf00,
+          })
+          Game.instance.effects.push(
+            new BurningGroundEffect({
+              position: {
+                x: targetX,
+                y: targetY,
+              },
+              radius: Fireball.AOE_RADIUS,
+              turnsRemaining: 3,
+            })
+          )
+          this.fireballSprite.setDepth(1000)
+          this.fireballSprite.play('fireball-explosion')
           const damage = this.calculateDamage()
           this.dealDamage(target, damage, DamageType.MAGIC, () => {
             this.processingAttack = false
             this.fireballSprite.setVisible(false)
+            Game.instance.postFxPlugin.remove(this.fireballSprite)
             UI.instance.floatingStatBars.setVisible(false)
             if (this.source.side === Side.PLAYER) {
               Game.instance.player.disablePointerMoveEvents = false

@@ -18,6 +18,7 @@ export class PiercingShot extends Action {
     super(ActionNames.PIERCING_SHOT, 'piercing-shot', partyMember)
     this.apCost = PiercingShot.AP_COST
     this.arrowSprite = Game.instance.add.sprite(0, 0, 'arrow').setVisible(false)
+    this.range = PiercingShot.ATTACK_RANGE
   }
 
   public handleClick(worldX: number, worldY: number): void {
@@ -27,16 +28,6 @@ export class PiercingShot extends Action {
         this.execute(partyMember)
       }
     }
-  }
-
-  isValidAttackTarget(partyMember: PartyMember) {
-    const tileDistance = Game.instance.map.getTileDistance(
-      this.source.sprite.x,
-      this.source.sprite.y,
-      partyMember.sprite.x,
-      partyMember.sprite.y
-    )
-    return tileDistance <= PiercingShot.ATTACK_RANGE && partyMember.side !== this.source.side
   }
 
   public calculateDamage() {

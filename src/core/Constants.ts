@@ -10,6 +10,12 @@ export enum DamageType {
   ARMOR,
 }
 
+export enum RenderLayer {
+  PLAYER = 'PLAYER',
+  EFFECTS = 'EFFECTS',
+  TILEMAP = 'TILEMAP',
+}
+
 export class Constants {
   public static WINDOW_WIDTH = 800
   public static WINDOW_HEIGHT = 800
@@ -24,6 +30,12 @@ export class Constants {
   public static MAGIC_ARMOR_COLOR = 0x0096ff
   public static PHYSICAL_ARMOR_COLOR = 0xd3d3d3
   public static END_TURN_BUTTON_COLOR = 0x227093
+
+  public static LAYERS = {
+    [RenderLayer.PLAYER]: 75,
+    [RenderLayer.EFFECTS]: 50,
+    [RenderLayer.TILEMAP]: 25,
+  }
 
   public static DEFAULT_PLAYER_CONFIG = [
     {

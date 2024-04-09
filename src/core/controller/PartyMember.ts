@@ -1,5 +1,5 @@
 import Game from '../../scenes/Game'
-import { Constants, Side } from '../Constants'
+import { Constants, RenderLayer, Side } from '../Constants'
 import { Action } from '../actions/Action'
 import { ActionCreator } from '../actions/ActionCreator'
 import { ActionNames } from '../actions/ActionNames'
@@ -76,6 +76,7 @@ export class PartyMember {
     this.sprite = this.game.add
       .sprite(position.x, position.y, config.texture)
       .setInteractive({ useHandCursor: 'true' })
+      .setDepth(Constants.LAYERS[RenderLayer.PLAYER])
     this.strength = config.strength
     this.dexterity = config.dexterity
     this.wisdom = config.wisdom

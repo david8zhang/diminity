@@ -10,6 +10,7 @@ export abstract class Action {
   public texture: string
   public source: PartyMember
   public apCost: number = 0
+  public range: number = 0
 
   constructor(name: ActionNames, texture: string, source: PartyMember) {
     this.name = name
@@ -29,7 +30,20 @@ export abstract class Action {
     }
   }
 
-  public abstract isValidAttackTarget(partyMember: PartyMember): boolean
+  public isValidAttackTarget(partyMember: PartyMember): boolean {
+    const tileDistance = Game.instance.map.getTileDistance(
+      this.source.sprite.x,
+      this.source.sprite.y,
+      partyMember.sprite.x,
+      partyMember.sprite.y
+    )
+    return (
+      tileDistance <= this.range &&
+      partyMember.side !== this.source.side &&
+      partyMember.currHealth > 0
+    )
+  }
+
   public abstract execute(target: PartyMember[] | PartyMember, onComplete?: Function): void
   public abstract onSelected(): void
   public onDeselect(): void {

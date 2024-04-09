@@ -42,4 +42,15 @@ export const createAnims = (anims: Phaser.Animations.AnimationManager) => {
     repeat: 0,
     frameRate: 10,
   })
+
+  anims.create({
+    key: 'fireball-explosion',
+    frames: anims.generateFrameNames('fireball-explosion', {
+      start: 0,
+      end: 7,
+      suffix: '.png',
+    }),
+    repeat: 0,
+    frameRate: 15,
+  })
 }

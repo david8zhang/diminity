@@ -1,9 +1,8 @@
 import Game from '../../scenes/Game'
 import { UI } from '../../scenes/UI'
-import { Constants, DamageType, Side } from '../Constants'
+import { Constants, DamageType, RenderLayer, Side } from '../Constants'
 import { PartyMember } from '../controller/PartyMember'
 import { PlayerPartyMember } from '../controller/PlayerPartyMember'
-import { UINumber } from '../ui/UINumber'
 import { Action } from './Action'
 import { ActionNames } from './ActionNames'
 
@@ -19,16 +18,7 @@ export class BasicAttackAction extends Action {
     super(ActionNames.BASIC_ATTACK, 'sword-icon', partyMember)
     this.apCost = BasicAttackAction.AP_COST
     this.animSprite = Game.instance.add.sprite(0, 0, '').setVisible(false)
-  }
-
-  public isValidAttackTarget(partyMember: PartyMember) {
-    const tileDistance = Game.instance.map.getTileDistance(
-      this.source.sprite.x,
-      this.source.sprite.y,
-      partyMember.sprite.x,
-      partyMember.sprite.y
-    )
-    return tileDistance <= BasicAttackAction.ATTACK_RANGE && partyMember.side !== this.source.side
+    this.range = BasicAttackAction.ATTACK_RANGE
   }
 
   public handleClick(worldX: number, worldY: number): void {
@@ -94,7 +84,7 @@ export class BasicAttackAction extends Action {
         .setPosition(target.sprite.x, target.sprite.y)
         .setOrigin(0, 0.5)
         .setVisible(true)
-        .setDepth(target.sprite.depth + 1)
+        .setDepth(Constants.LAYERS[RenderLayer.EFFECTS])
       let animName = 'slash'
       if (this.source.animOverrides[ActionNames.BASIC_ATTACK]) {
         animName = this.source.animOverrides[ActionNames.BASIC_ATTACK]

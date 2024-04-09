@@ -7,6 +7,7 @@ import { PartyMember, PartyMemberConfig } from '../core/controller/PartyMember'
 import { Player } from '../core/controller/Player'
 import { UI } from './UI'
 import { createAnims } from '../core/anims/createAnims'
+import { GroundEffect } from '../core/effects/GroundEffect'
 
 export default class Game extends Phaser.Scene {
   private static _instance: Game
@@ -16,6 +17,7 @@ export default class Game extends Phaser.Scene {
   public postFxPlugin: any
   public turnOrder: string[] = []
   public partyMemberToActIndex: number = 0
+  public effects: GroundEffect[] = []
 
   constructor() {
     super('game')
@@ -86,9 +88,6 @@ export default class Game extends Phaser.Scene {
     this.partyMemberToActIndex = 0
     const partyMemberToAct = this.getPartyMember(this.turnOrder[this.partyMemberToActIndex])
     this.cameras.main.centerOn(partyMemberToAct.sprite.x, partyMemberToAct.sprite.y)
-
-    const sprite = this.add.sprite(100, 100, '')
-    sprite.play('swipe')
   }
 
   public get partyMemberToActId() {
@@ -171,16 +170,32 @@ export default class Game extends Phaser.Scene {
     if (prevPartyMember) {
       prevPartyMember.dehighlight()
       UI.instance.dehighlightPartyMemberCard(this.partyMemberToActId)
-      this.partyMemberToActIndex = (this.partyMemberToActIndex + 1) % this.turnOrder.length
-      UI.instance.highlightPartyMemberCard(this.turnOrder[this.partyMemberToActIndex])
-      const partyMemberToActId = this.turnOrder[this.partyMemberToActIndex]
-      const partyMemberToAct =
-        this.cpu.partyMembers[partyMemberToActId] || this.player.partyMembers[partyMemberToActId]
-      this.startPartyMemberTurn(partyMemberToAct)
-      if (partyMemberToAct.side === Side.CPU) {
-        UI.instance.endTurnButton.setVisible(false)
-      }
+      this.startNextPartyMemberTurn()
     }
+  }
+
+  startNextPartyMemberTurn() {
+    this.partyMemberToActIndex = (this.partyMemberToActIndex + 1) % this.turnOrder.length
+    UI.instance.highlightPartyMemberCard(this.turnOrder[this.partyMemberToActIndex])
+    const partyMemberToActId = this.turnOrder[this.partyMemberToActIndex]
+    const partyMemberToAct =
+      this.cpu.partyMembers[partyMemberToActId] || this.player.partyMembers[partyMemberToActId]
+    this.startPartyMemberTurn(partyMemberToAct)
+    if (partyMemberToAct.side === Side.CPU) {
+      UI.instance.endTurnButton.setVisible(false)
+    }
+    this.handleEffects()
+  }
+
+  handleEffects() {
+    this.effects = this.effects.filter((e) => e.turnsRemaining > 0)
+    this.effects.forEach((effect) => {
+      effect.process()
+      effect.turnsRemaining--
+      if (effect.turnsRemaining == 0) {
+        effect.teardown()
+      }
+    })
   }
 
   getPartyMemberAtPosition(worldX: number, worldY: number) {
