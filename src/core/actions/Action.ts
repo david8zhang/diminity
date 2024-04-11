@@ -77,7 +77,8 @@ export abstract class Action {
     target: PartyMember,
     damage: number,
     damageType: DamageType,
-    onComplete: Function
+    onComplete: Function,
+    tint?: number
   ) {
     if (damageType === DamageType.ARMOR) {
       target.takePhysicalDamage(damage)
@@ -86,7 +87,7 @@ export abstract class Action {
     }
     UI.instance.floatingStatBars.displayDamage(target)
     Game.instance.cameras.main.shake(150, 0.001)
-    target.sprite.setTintFill(0xff0000)
+    target.sprite.setTintFill(tint ? tint : 0xff0000)
     UINumber.createNumber(
       `-${damage}`,
       Game.instance,

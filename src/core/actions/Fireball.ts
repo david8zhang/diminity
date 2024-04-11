@@ -25,6 +25,21 @@ export class Fireball extends Action {
     super(ActionNames.FIREBALL, '', partyMember)
     this.apCost = Fireball.AP_COST
     this.fireballSprite = Game.instance.add.sprite(0, 0, 'fireball').setVisible(false).setScale(1.5)
+    this.fireballSprite.on(Phaser.Animations.Events.ANIMATION_UPDATE, (_, frame) => {
+      if (frame.index == 3) {
+        console.log('Went here!')
+        Game.instance.effects.push(
+          new BurningGroundEffect({
+            position: {
+              x: this.fireballSprite.x,
+              y: this.fireballSprite.y,
+            },
+            radius: Fireball.AOE_RADIUS,
+            turnsRemaining: 3,
+          })
+        )
+      }
+    })
     this.range = Fireball.ATTACK_RANGE
   }
 
@@ -118,16 +133,6 @@ export class Fireball extends Action {
             thickness: 2,
             outlineColor: 0xffbf00,
           })
-          Game.instance.effects.push(
-            new BurningGroundEffect({
-              position: {
-                x: targetX,
-                y: targetY,
-              },
-              radius: Fireball.AOE_RADIUS,
-              turnsRemaining: 3,
-            })
-          )
           this.fireballSprite.setDepth(1000)
           this.fireballSprite.play('fireball-explosion')
           const damage = this.calculateDamage()

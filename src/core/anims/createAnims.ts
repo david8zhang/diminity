@@ -53,4 +53,26 @@ export const createAnims = (anims: Phaser.Animations.AnimationManager) => {
     repeat: 0,
     frameRate: 15,
   })
+
+  anims.create({
+    key: 'burning',
+    frames: anims.generateFrameNames('burning', {
+      start: 0,
+      end: 7,
+      suffix: '.png',
+    }),
+    repeat: -1,
+    frameRate: 15,
+  })
+
+  anims.create({
+    key: 'bleed',
+    frames: anims.generateFrameNames('bleed', {
+      start: 0,
+      end: 5,
+      suffix: '.png',
+    }),
+    repeat: 0,
+    frameRate: 10,
+  })
 }

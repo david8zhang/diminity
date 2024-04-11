@@ -34,6 +34,8 @@ export class Preload extends Phaser.Scene {
       'animations/fireball-explosion.png',
       'animations/fireball-explosion.json'
     )
+    this.load.atlas('burning', 'animations/burning.png', 'animations/burning.json')
+    this.load.atlas('bleed', 'animations/bleed.png', 'animations/bleed.json')
   }
 
   create() {

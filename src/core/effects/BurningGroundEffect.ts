@@ -7,6 +7,8 @@ import { GroundEffect, GroundEffectConfig } from './GroundEffect'
 export class BurningGroundEffect extends GroundEffect {
   private effectSprite: Phaser.GameObjects.Arc
   private static DAMAGE = 1
+  private static NUM_FLAMES = 10
+  private flameSprites: Phaser.GameObjects.Sprite[] = []
 
   constructor(config: GroundEffectConfig) {
     super(config)
@@ -19,6 +21,22 @@ export class BurningGroundEffect extends GroundEffect {
         0.5
       )
       .setDepth(Constants.LAYERS[RenderLayer.EFFECTS])
+    this.setupFlames()
+  }
+
+  setupFlames() {
+    for (let i = 0; i < BurningGroundEffect.NUM_FLAMES; i++) {
+      const spawnRange = this.effectSprite.radius * 0.75
+      const randX = this.effectSprite.x + Phaser.Math.Between(-spawnRange, spawnRange)
+      const randY = this.effectSprite.y + Phaser.Math.Between(-spawnRange, spawnRange)
+      const newFlameSprite = Game.instance.add
+        .sprite(randX, randY, '')
+        .setDepth(Constants.LAYERS[RenderLayer.EFFECTS])
+        .setFlipX(Phaser.Math.Between(0, 1) == 0)
+        .setAlpha(0.5)
+      newFlameSprite.play('burning')
+      this.flameSprites.push(newFlameSprite)
+    }
   }
 
   public process(): void {
@@ -48,7 +66,7 @@ export class BurningGroundEffect extends GroundEffect {
 
   teardown() {
     Game.instance.tweens.add({
-      targets: [this.effectSprite],
+      targets: [this.effectSprite, ...this.flameSprites],
       alpha: {
         from: 1,
         to: 0,
@@ -56,6 +74,9 @@ export class BurningGroundEffect extends GroundEffect {
       duration: 500,
       onComplete: () => {
         this.effectSprite.destroy()
+        this.flameSprites.forEach((sprite) => {
+          sprite.destroy()
+        })
       },
     })
   }

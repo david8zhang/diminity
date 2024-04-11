@@ -1,13 +1,13 @@
 import Game from '../../scenes/Game'
 import { UI } from '../../scenes/UI'
-import { Constants, DamageType, Side } from '../Constants'
+import { Constants, DamageType, RenderLayer, Side } from '../Constants'
 import { PartyMember } from '../controller/PartyMember'
 import { PlayerPartyMember } from '../controller/PlayerPartyMember'
 import { Action } from './Action'
 import { ActionNames } from './ActionNames'
 
 export class PiercingShot extends Action {
-  private static ATTACK_RANGE = 8.5
+  private static ATTACK_RANGE = 20.5
   private static AP_COST = 3
   private static TILE_HIGHLIGHT_COLOR = 0xff0000
   private processingAttack: boolean = false
@@ -65,20 +65,33 @@ export class PiercingShot extends Action {
         },
         duration: (distance / 5) * 100,
         onComplete: () => {
+          const bleedSprite = Game.instance.add
+            .sprite(targetX, targetY, '')
+            .setDepth(Constants.LAYERS[RenderLayer.PLAYER])
+          bleedSprite.play('bleed')
+          bleedSprite.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+            bleedSprite.destroy()
+          })
           this.arrowSprite.setVisible(false)
           const damage = this.calculateDamage()
-          this.dealDamage(target, damage, DamageType.ARMOR, () => {
-            this.processingAttack = false
-            this.arrowSprite.setVisible(false)
-            UI.instance.floatingStatBars.setVisible(false)
-            if (this.source.side === Side.PLAYER) {
-              Game.instance.player.disablePointerMoveEvents = false
-              UI.instance.endTurnButton.setVisible(true)
-            }
-            if (onComplete) {
-              onComplete()
-            }
-          })
+          this.dealDamage(
+            target,
+            damage,
+            DamageType.ARMOR,
+            () => {
+              this.processingAttack = false
+              this.arrowSprite.setVisible(false)
+              UI.instance.floatingStatBars.setVisible(false)
+              if (this.source.side === Side.PLAYER) {
+                Game.instance.player.disablePointerMoveEvents = false
+                UI.instance.endTurnButton.setVisible(true)
+              }
+              if (onComplete) {
+                onComplete()
+              }
+            },
+            0xffffff
+          )
           Game.instance.time.delayedCall(100, () => {
             target.sprite.clearTint()
           })
