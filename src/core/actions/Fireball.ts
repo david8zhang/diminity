@@ -28,7 +28,6 @@ export class Fireball extends Action {
     this.fireballSprite = Game.instance.add.sprite(0, 0, 'fireball').setVisible(false).setScale(1.5)
     this.fireballSprite.on(Phaser.Animations.Events.ANIMATION_UPDATE, (_, frame) => {
       if (frame.index == 3) {
-        console.log('Went here!')
         Game.instance.effects.push(
           new BurningGroundEffect({
             position: {
@@ -94,15 +93,15 @@ export class Fireball extends Action {
         ? gameInstance.player.allPartyMembers
         : gameInstance.cpu.allPartyMembers
     const radiusPixels = Fireball.AOE_RADIUS * Constants.CELL_SIZE
-    const xLeft = centerPosition.x - radiusPixels
-    const xRight = centerPosition.x + radiusPixels
-    const yUp = centerPosition.y - radiusPixels
-    const yDown = centerPosition.y + radiusPixels
 
     return enemyPartyMembers.filter((pm) => {
-      return (
-        pm.sprite.x >= xLeft && pm.sprite.x <= xRight && pm.sprite.y >= yUp && pm.sprite.y <= yDown
+      const distToCenter = Phaser.Math.Distance.Between(
+        pm.sprite.x,
+        pm.sprite.y,
+        centerPosition.x,
+        centerPosition.y
       )
+      return distToCenter <= radiusPixels
     })
   }
 
