@@ -29,6 +29,9 @@ export class PlayerPartyMember extends PartyMember {
 
   startTurn() {
     super.startTurn(Constants.OUTLINE_COLOR)
+    Object.values(this.actions).forEach((action) => {
+      action.cooldown = Math.max(0, action.cooldown - 1)
+    })
     if (UI.instance) {
       UI.instance.selectPartyMember(this)
     }
@@ -100,7 +103,11 @@ export class PlayerPartyMember extends PartyMember {
 
   onActionClick(actionName: ActionNames) {
     const clickedAction = this.actions[actionName]
-    if (clickedAction && clickedAction.apCost <= this.currActionPoints) {
+    if (
+      clickedAction &&
+      clickedAction.apCost <= this.currActionPoints &&
+      clickedAction.cooldown == 0
+    ) {
       this.resetHighlight()
       this.actionState = ActionState.PERFORMING_ACTION
       this.selectedAction = this.actions[actionName]!

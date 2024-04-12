@@ -11,6 +11,7 @@ export abstract class Action {
   public source: PartyMember
   public apCost: number = 0
   public range: number = 0
+  public cooldown: number = 0
 
   constructor(name: ActionNames, texture: string, source: PartyMember) {
     this.name = name
@@ -44,7 +45,10 @@ export abstract class Action {
     )
   }
 
-  public abstract execute(target: PartyMember[] | PartyMember, onComplete?: Function): void
+  public abstract execute(
+    target: PartyMember[] | PartyMember | { x: number; y: number },
+    onComplete?: Function
+  ): void
   public abstract onSelected(): void
   public onDeselect(): void {
     return

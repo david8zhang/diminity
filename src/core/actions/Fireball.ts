@@ -12,6 +12,7 @@ export class Fireball extends Action {
   private static AOE_RADIUS = 2.5
   // private static AP_COST = 4
   private static AP_COST = 0
+  private static COOLDOWN = 3
   private static ATTACK_RANGE_HIGHLIGHT_COLOR = 0xff0000
   private static AOE_HIGHLIGHT_COLOR = 0xffbf00
 
@@ -41,6 +42,7 @@ export class Fireball extends Action {
       }
     })
     this.range = Fireball.ATTACK_RANGE
+    this.cooldown = 0
   }
 
   public handleHover(worldX: number, worldY: number): void {
@@ -74,10 +76,10 @@ export class Fireball extends Action {
 
   public handleClick(worldX: number, worldY: number): void {
     if (Game.instance.map.isWorldXYWithinBounds(worldX, worldY)) {
-      const partyMember = Game.instance.getPartyMemberAtPosition(worldX, worldY)
-      if (partyMember && this.isValidAttackTarget(partyMember)) {
-        this.execute(partyMember)
-      }
+      this.execute({
+        x: worldX,
+        y: worldY,
+      })
     }
   }
 
@@ -85,18 +87,39 @@ export class Fireball extends Action {
     return this.source.wisdom * Phaser.Math.Between(1, 2)
   }
 
-  public execute(target: PartyMember, onComplete?: Function): void {
+  public getAllEnemyPartyMembersWithinRadius(centerPosition: { x: number; y: number }) {
+    const gameInstance = Game.instance
+    const enemyPartyMembers =
+      this.source.side === Side.CPU
+        ? gameInstance.player.allPartyMembers
+        : gameInstance.cpu.allPartyMembers
+    const radiusPixels = Fireball.AOE_RADIUS * Constants.CELL_SIZE
+    const xLeft = centerPosition.x - radiusPixels
+    const xRight = centerPosition.x + radiusPixels
+    const yUp = centerPosition.y - radiusPixels
+    const yDown = centerPosition.y + radiusPixels
+
+    return enemyPartyMembers.filter((pm) => {
+      return (
+        pm.sprite.x >= xLeft && pm.sprite.x <= xRight && pm.sprite.y >= yUp && pm.sprite.y <= yDown
+      )
+    })
+  }
+
+  public execute(targetPosition: { x: number; y: number }, onComplete?: Function): void {
     if (!this.processingAttack) {
       this.attackRangeTiles.forEach((tile) => {
         tile.setVisible(false)
       })
       this.processingAttack = true
       this.source.subtractActionPoints(this.apCost)
+      this.cooldown = Fireball.COOLDOWN
+      UI.instance.actionMenu.displayActionsForPartyMember(this.source)
+
       if (this.source.side === Side.PLAYER) {
         Game.instance.player.disablePointerMoveEvents = true
       }
-      UI.instance.floatingStatBars.setVisible(true)
-      UI.instance.floatingStatBars.selectCurrPartyMember(target)
+      UI.instance.hideFloatingStatBars()
       Game.instance.postFxPlugin.add(this.fireballSprite, {
         thickness: 2,
         outlineColor: 0xffff00,
@@ -108,8 +131,8 @@ export class Fireball extends Action {
         .setScale(1.5)
         .setTexture('fireball')
 
-      const targetX = target.sprite.x
-      const targetY = target.sprite.y
+      const targetX = targetPosition.x
+      const targetY = targetPosition.y
       const sourceX = this.source.sprite.x
       const sourceY = this.source.sprite.y
 
@@ -128,6 +151,7 @@ export class Fireball extends Action {
         },
         duration: (distance / 5) * 200,
         onComplete: () => {
+          Game.instance.cameras.main.shake(150, 0.001)
           Game.instance.postFxPlugin.remove(this.fireballSprite)
           Game.instance.postFxPlugin.add(this.fireballSprite, {
             thickness: 2,
@@ -135,8 +159,25 @@ export class Fireball extends Action {
           })
           this.fireballSprite.setDepth(1000)
           this.fireballSprite.play('fireball-explosion')
-          const damage = this.calculateDamage()
-          this.dealDamage(target, damage, DamageType.MAGIC, () => {
+
+          // Deal damage to all enemies within the affected radius
+          const affectedEnemies = this.getAllEnemyPartyMembersWithinRadius(targetPosition)
+          affectedEnemies.forEach((enemy) => {
+            const damage = this.calculateDamage()
+            this.dealDamage(enemy, damage, DamageType.MAGIC, () => {})
+            Game.instance.time.delayedCall(100, () => {
+              enemy.sprite.clearTint()
+            })
+          })
+
+          // Go back to idle after fireball lands
+          if (this.source.side === Side.PLAYER) {
+            const playerPartyMember = this.source as PlayerPartyMember
+            playerPartyMember.goBackToIdle()
+            UI.instance.endTurnButton.setVisible(false)
+          }
+
+          Game.instance.time.delayedCall(1000, () => {
             this.processingAttack = false
             this.fireballSprite.setVisible(false)
             Game.instance.postFxPlugin.remove(this.fireballSprite)
@@ -149,14 +190,6 @@ export class Fireball extends Action {
               onComplete()
             }
           })
-          Game.instance.time.delayedCall(100, () => {
-            target.sprite.clearTint()
-          })
-          if (this.source.side === Side.PLAYER) {
-            const playerPartyMember = this.source as PlayerPartyMember
-            playerPartyMember.goBackToIdle()
-            UI.instance.endTurnButton.setVisible(false)
-          }
         },
       })
     }

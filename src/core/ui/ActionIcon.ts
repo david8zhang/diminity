@@ -15,6 +15,8 @@ export class ActionIcon {
   private ui: UI
   private bgRect: Phaser.GameObjects.Rectangle
   private sprite: Phaser.GameObjects.Sprite
+  private cooldownOverlay: Phaser.GameObjects.Rectangle
+  private cooldownText: Phaser.GameObjects.Text
   private currActionName: ActionNames | null = null
 
   constructor(ui: UI, config: ActionIconConfig) {
@@ -34,6 +36,23 @@ export class ActionIcon {
       .setVisible(false)
       .setOrigin(0, 0)
       .setScale(0.75)
+
+    this.cooldownOverlay = this.ui.add
+      .rectangle(this.bgRect.x, this.bgRect.y, UI.ICON_BOX_SIZE, UI.ICON_BOX_SIZE, 0x000000, 0.5)
+      .setOrigin(0, 0)
+      .setVisible(false)
+    this.cooldownText = this.ui.add
+      .text(
+        this.bgRect.x + this.bgRect.displayWidth / 2,
+        this.bgRect.y + this.bgRect.displayHeight / 2,
+        '',
+        {
+          fontSize: '20px',
+        }
+      )
+      .setOrigin(0.5, 0.5)
+      .setColor('#ffffff')
+      .setVisible(false)
   }
 
   displayAction(action: Action) {
@@ -44,6 +63,13 @@ export class ActionIcon {
       this.bgRect.y + (this.bgRect.displayHeight - this.sprite.displayHeight) / 2
     )
     this.sprite.setVisible(true)
+    if (action.cooldown > 0) {
+      this.cooldownText.setText(`${action.cooldown}`).setVisible(true)
+      this.cooldownOverlay.setVisible(true)
+    } else {
+      this.cooldownText.setVisible(false)
+      this.cooldownOverlay.setVisible(false)
+    }
   }
 
   onActionClicked() {
@@ -66,5 +92,7 @@ export class ActionIcon {
   clear() {
     this.currActionName = null
     this.sprite.setVisible(false)
+    this.cooldownOverlay.setVisible(false)
+    this.cooldownText.setVisible(false)
   }
 }
