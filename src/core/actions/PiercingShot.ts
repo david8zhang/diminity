@@ -3,6 +3,7 @@ import { UI } from '../../scenes/UI'
 import { Constants, DamageType, RenderLayer, Side } from '../Constants'
 import { PartyMember } from '../controller/PartyMember'
 import { PlayerPartyMember } from '../controller/PlayerPartyMember'
+import { BleedEffect } from '../effects/BleedEffect'
 import { Action } from './Action'
 import { ActionNames } from './ActionNames'
 
@@ -72,6 +73,7 @@ export class PiercingShot extends Action {
           bleedSprite.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
             bleedSprite.destroy()
           })
+          Game.instance.effects.push(new BleedEffect(target))
           this.arrowSprite.setVisible(false)
           const damage = this.calculateDamage()
           this.dealDamage(

@@ -101,7 +101,7 @@ export class Fireball extends Action {
         centerPosition.x,
         centerPosition.y
       )
-      return distToCenter <= radiusPixels
+      return pm.currHealth > 0 && distToCenter <= radiusPixels
     })
   }
 

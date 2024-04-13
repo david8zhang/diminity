@@ -8,6 +8,7 @@ import { Player } from '../core/controller/Player'
 import { UI } from './UI'
 import { createAnims } from '../core/anims/createAnims'
 import { GroundEffect } from '../core/effects/GroundEffect'
+import { PartyMemberEffect } from '../core/effects/PartyMemberEffect'
 
 export default class Game extends Phaser.Scene {
   private static _instance: Game
@@ -17,7 +18,7 @@ export default class Game extends Phaser.Scene {
   public postFxPlugin: any
   public turnOrder: string[] = []
   public partyMemberToActIndex: number = 0
-  public effects: GroundEffect[] = []
+  public effects: (GroundEffect | PartyMemberEffect)[] = []
 
   constructor() {
     super('game')
@@ -175,6 +176,7 @@ export default class Game extends Phaser.Scene {
   }
 
   startNextPartyMemberTurn() {
+    this.handleEffects()
     this.partyMemberToActIndex = (this.partyMemberToActIndex + 1) % this.turnOrder.length
     UI.instance.highlightPartyMemberCard(this.turnOrder[this.partyMemberToActIndex])
     const partyMemberToActId = this.turnOrder[this.partyMemberToActIndex]
@@ -184,7 +186,6 @@ export default class Game extends Phaser.Scene {
     if (partyMemberToAct.side === Side.CPU) {
       UI.instance.endTurnButton.setVisible(false)
     }
-    this.handleEffects()
   }
 
   handleEffects() {

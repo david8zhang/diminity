@@ -26,7 +26,7 @@ export abstract class GroundEffect {
 
   public abstract process(): void
 
-  public teardown() {}
+  public abstract teardown(): void
 
   public getAffectedPartyMembers(): PartyMember[] {
     const rowCol = Game.instance.map.getRowColForWorldPosition(this.position.x, this.position.y)
