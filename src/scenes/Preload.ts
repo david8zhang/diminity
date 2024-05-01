@@ -19,6 +19,9 @@ export class Preload extends Phaser.Scene {
 
     // Icons
     this.load.image('sword-icon', 'icons/sword.png')
+    this.load.image('fireball-icon', 'icons/fireball.png')
+    this.load.image('piercing-shot', 'icons/piercing-shot.png')
+    this.load.image('tremor-strike', 'icons/tremor-strike.png')
 
     // Objects
     this.load.image('arrow', 'objects/arrow.png')

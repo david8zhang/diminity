@@ -23,7 +23,7 @@ export class Fireball extends Action {
   private attackRangeTiles: Phaser.GameObjects.Rectangle[] = []
 
   constructor(partyMember: PartyMember) {
-    super(ActionNames.FIREBALL, '', partyMember)
+    super(ActionNames.FIREBALL, 'fireball-icon', partyMember)
     this.apCost = Fireball.AP_COST
     this.fireballSprite = Game.instance.add.sprite(0, 0, 'fireball').setVisible(false).setScale(1.5)
     this.fireballSprite.on(Phaser.Animations.Events.ANIMATION_UPDATE, (_, frame) => {

@@ -35,7 +35,6 @@ export class ActionIcon {
       .sprite(this.bgRect.x, this.bgRect.y, '')
       .setVisible(false)
       .setOrigin(0, 0)
-      .setScale(0.75)
 
     this.cooldownOverlay = this.ui.add
       .rectangle(this.bgRect.x, this.bgRect.y, UI.ICON_BOX_SIZE, UI.ICON_BOX_SIZE, 0x000000, 0.5)
@@ -58,11 +57,9 @@ export class ActionIcon {
   displayAction(action: Action) {
     this.currActionName = action.name
     this.sprite.setTexture(action.texture)
-    this.sprite.setPosition(
-      this.bgRect.x + (this.bgRect.displayWidth - this.sprite.displayWidth) / 2,
-      this.bgRect.y + (this.bgRect.displayHeight - this.sprite.displayHeight) / 2
-    )
+    this.sprite.setPosition(this.bgRect.x, this.bgRect.y)
     this.sprite.setVisible(true)
+    this.sprite.setDisplaySize(this.bgRect.displayWidth, this.bgRect.displayHeight)
     if (action.cooldown > 0) {
       this.cooldownText.setText(`${action.cooldown}`).setVisible(true)
       this.cooldownOverlay.setVisible(true)

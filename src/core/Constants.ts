@@ -76,6 +76,7 @@ export class Constants {
       animOverrides: {
         [ActionNames.BASIC_ATTACK]: 'slash',
       },
+      actionNames: [ActionNames.TREMOR_STRIKE],
     },
     {
       rowColPos: {
