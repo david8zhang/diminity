@@ -10,8 +10,7 @@ import { ActionNames } from './ActionNames'
 export class Fireball extends Action {
   private static ATTACK_RANGE = 8.5
   private static AOE_RADIUS = 2.5
-  // private static AP_COST = 4
-  private static AP_COST = 0
+  private static AP_COST = 4
   private static COOLDOWN = 3
   private static ATTACK_RANGE_HIGHLIGHT_COLOR = 0xff0000
   private static AOE_HIGHLIGHT_COLOR = 0xffbf00
