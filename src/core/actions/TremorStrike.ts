@@ -1,6 +1,8 @@
 import Game from '../../scenes/Game'
-import { Constants } from '../Constants'
+import { UI } from '../../scenes/UI'
+import { Constants, DamageType, Side } from '../Constants'
 import { PartyMember } from '../controller/PartyMember'
+import { PlayerPartyMember } from '../controller/PlayerPartyMember'
 import { Action } from './Action'
 import { ActionNames } from './ActionNames'
 
@@ -9,6 +11,8 @@ export class TremorStrike extends Action {
   private static ATTACK_RANGE_HIGHLIGHT_COLOR = 0xd3d3d3
   private static AOE_RANGE_HIGHLIGHT_COLOR = 0xff0000
   private static ANGLE_RANGE = 20
+  private static AP_COST = 2
+  private static COOLDOWN = 3
 
   public showAOERange: boolean = false
   private AOETiles: Phaser.GameObjects.Rectangle[] = []
@@ -28,10 +32,13 @@ export class TremorStrike extends Action {
   }
 
   public execute(target: { x: number; y: number }, onComplete?: Function | undefined): void {
-    this.AOETiles.forEach((tile) => tile.destroy())
-    this.AOETiles = []
+    this.AOETiles.forEach((tile) => tile.setVisible(false))
     this.attackRangeTiles.forEach((tile) => tile.destroy())
     this.attackRangeTiles = []
+    UI.instance.endTurnButton.setVisible(false)
+    this.source.subtractActionPoints(TremorStrike.AP_COST)
+    this.cooldown = TremorStrike.COOLDOWN
+    UI.instance.actionMenu.displayActionsForPartyMember(this.source)
 
     const sourceSprite = this.source.sprite
     const line = new Phaser.Geom.Line()
@@ -62,14 +69,58 @@ export class TremorStrike extends Action {
       .setDepth(1000)
     animationSprite.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
       if (animationPoints.length > 0) {
+        Game.instance.cameras.main.shake(100, 0.005)
         const point = animationPoints.shift()!
         animationSprite.setPosition(point.x, point.y)
         animationSprite.play('bleed')
       }
     })
+    Game.instance.cameras.main.shake(100, 0.005)
     const point = animationPoints.shift()!
     animationSprite.setPosition(point.x, point.y)
     animationSprite.play('bleed')
+
+    const affectedPartyMembers = this.getAllAffectedEnemies()
+    affectedPartyMembers.forEach((pm) => {
+      const damage = this.calculateDamage()
+      this.dealDamage(pm, damage, DamageType.ARMOR, () => {
+        if (onComplete) {
+          onComplete()
+        }
+      })
+      Game.instance.time.delayedCall(250, () => {
+        pm.sprite.clearTint()
+      })
+    })
+
+    if (this.source.side === Side.PLAYER) {
+      Game.instance.player.disablePointerMoveEvents = false
+      UI.instance.endTurnButton.setVisible(true)
+      const playerPartyMember = this.source as PlayerPartyMember
+      playerPartyMember.goBackToIdle()
+      UI.instance.endTurnButton.setVisible(false)
+    }
+  }
+
+  isIncludedInAOETiles(partyMember: PartyMember) {
+    for (let i = 0; i < this.AOETiles.length; i++) {
+      const tile = this.AOETiles[i]
+      if (partyMember.sprite.x == tile.x && partyMember.sprite.y == tile.y) {
+        return true
+      }
+    }
+    return false
+  }
+
+  public calculateDamage() {
+    return this.source.strength * Phaser.Math.Between(1, 3)
+  }
+
+  public getAllAffectedEnemies() {
+    const cpuPartyMembers = Game.instance.cpu.allPartyMembers
+    return cpuPartyMembers.filter((pm) => {
+      return this.isIncludedInAOETiles(pm)
+    })
   }
 
   public handleHover(worldX: number, worldY: number) {
@@ -133,6 +184,15 @@ export class TremorStrike extends Action {
       }
     }
     return false
+  }
+
+  public onDeselect(): void {
+    this.AOETiles.forEach((tile) => {
+      tile.destroy()
+    })
+    this.attackRangeTiles.forEach((tile) => {
+      tile.destroy()
+    })
   }
 
   public onSelected(): void {

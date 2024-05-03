@@ -67,7 +67,7 @@ export class Constants {
       maxPhysicalArmor: 20,
       maxMagicArmor: 5,
       texture: 'fighter',
-      apCostPerSquareMoved: 0.5,
+      apCostPerSquareMoved: 0.1,
       actionPointPerTurn: 3,
       strength: 4,
       dexterity: 2,
