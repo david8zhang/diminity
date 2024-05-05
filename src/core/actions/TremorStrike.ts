@@ -19,7 +19,7 @@ export class TremorStrike extends Action {
   public attackRangeTiles: Phaser.GameObjects.Rectangle[] = []
 
   constructor(partyMember: PartyMember) {
-    super(ActionNames.TREMOR_STRIKE, 'tremor-strike', partyMember)
+    super(ActionNames.TREMOR_STRIKE, 'tremor-strike-icon', partyMember)
   }
 
   public handleClick(worldX: number, worldY: number): void {
@@ -56,29 +56,59 @@ export class TremorStrike extends Action {
       angleBetween,
       TremorStrike.ATTACK_RANGE * Constants.CELL_SIZE
     )
-    const animationPoints = [
-      line.getPoint(0.25),
-      line.getPoint(0.5),
-      line.getPoint(0.75),
-      line.getPoint(1),
-    ]
-    const animationSprite = Game.instance.add
+    const animationPoints = [line.getPoint(0.25), line.getPoint(0.5), line.getPoint(0.75)]
+
+    const tremorShockwave = Game.instance.add
       .sprite(sourceSprite.x, sourceSprite.y, '')
-      .setTintFill(0x7b3f00)
-      .setScale(3)
+      .setScale(1.5)
       .setDepth(1000)
-    animationSprite.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-      if (animationPoints.length > 0) {
-        Game.instance.cameras.main.shake(100, 0.005)
-        const point = animationPoints.shift()!
-        animationSprite.setPosition(point.x, point.y)
-        animationSprite.play('bleed')
-      }
+
+    tremorShockwave.setRotation(angleBetween)
+    tremorShockwave.play('tremor-shockwave')
+
+    Game.instance.time.addEvent({
+      repeat: animationPoints.length - 1,
+      delay: 200,
+      callback: () => {
+        if (animationPoints.length > 0) {
+          const tremorStrike = Game.instance.add
+            .sprite(sourceSprite.x, sourceSprite.y, '')
+            .setDepth(1000)
+            .setScale(1.5)
+            .on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+              if (animationPoints.length == 0) {
+                tremorStrike.destroy()
+              }
+            })
+          Game.instance.cameras.main.shake(150, 0.001)
+          const nextPosition = animationPoints.shift()!
+          tremorStrike.setPosition(nextPosition.x, nextPosition.y)
+          tremorStrike.play('tremor-strike')
+        }
+      },
+      startAt: 200,
     })
-    Game.instance.cameras.main.shake(100, 0.005)
-    const point = animationPoints.shift()!
-    animationSprite.setPosition(point.x, point.y)
-    animationSprite.play('bleed')
+
+    Game.instance.tweens.add({
+      targets: [tremorShockwave],
+      duration: 500,
+      x: {
+        from: sourceSprite.x,
+        to: target.x,
+      },
+      y: {
+        from: sourceSprite.y,
+        to: target.y,
+      },
+      alpha: {
+        from: 1,
+        to: 0,
+      },
+      ease: Phaser.Math.Easing.Sine.Out,
+      onComplete: () => {
+        tremorShockwave.destroy()
+      },
+    })
 
     const affectedPartyMembers = this.getAllAffectedEnemies()
     affectedPartyMembers.forEach((pm) => {

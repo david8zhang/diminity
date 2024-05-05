@@ -21,7 +21,7 @@ export class Preload extends Phaser.Scene {
     this.load.image('sword-icon', 'icons/sword.png')
     this.load.image('fireball-icon', 'icons/fireball.png')
     this.load.image('piercing-shot', 'icons/piercing-shot.png')
-    this.load.image('tremor-strike', 'icons/tremor-strike.png')
+    this.load.image('tremor-strike-icon', 'icons/tremor-strike.png')
 
     // Objects
     this.load.image('arrow', 'objects/arrow.png')
@@ -39,6 +39,16 @@ export class Preload extends Phaser.Scene {
     )
     this.load.atlas('burning', 'animations/burning.png', 'animations/burning.json')
     this.load.atlas('bleed', 'animations/bleed.png', 'animations/bleed.json')
+    this.load.atlas(
+      'tremor-shockwave',
+      'animations/tremor-shockwave.png',
+      'animations/tremor-shockwave.json'
+    )
+    this.load.atlas(
+      'tremor-strike',
+      'animations/tremor-strike.png',
+      'animations/tremor-strike.json'
+    )
   }
 
   create() {

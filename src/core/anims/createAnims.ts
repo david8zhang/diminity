@@ -75,4 +75,26 @@ export const createAnims = (anims: Phaser.Animations.AnimationManager) => {
     repeat: 0,
     frameRate: 10,
   })
+
+  anims.create({
+    key: 'tremor-shockwave',
+    frames: anims.generateFrameNames('tremor-shockwave', {
+      start: 0,
+      end: 5,
+      suffix: '.png',
+    }),
+    repeat: 0,
+    frameRate: 8,
+  })
+
+  anims.create({
+    key: 'tremor-strike',
+    frames: anims.generateFrameNames('tremor-strike', {
+      start: 0,
+      end: 6,
+      suffix: '.png',
+    }),
+    repeat: 0,
+    frameRate: 12,
+  })
 }
