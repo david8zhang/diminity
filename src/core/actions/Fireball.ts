@@ -47,6 +47,7 @@ export class Fireball extends Action {
     if (!Game.instance.map.isWorldXYWithinBounds(worldX, worldY)) {
       return
     }
+    UI.instance.actionPointDisplay.displayActionPotentialPointCost(this.source, this.apCost)
     if (this.showAOERange && this.isWithinAttackRange(worldX, worldY)) {
       this.AOETiles.forEach((rect) => {
         rect.destroy()

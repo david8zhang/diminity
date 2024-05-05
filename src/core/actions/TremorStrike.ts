@@ -20,6 +20,7 @@ export class TremorStrike extends Action {
 
   constructor(partyMember: PartyMember) {
     super(ActionNames.TREMOR_STRIKE, 'tremor-strike-icon', partyMember)
+    this.apCost = TremorStrike.AP_COST
   }
 
   public handleClick(worldX: number, worldY: number): void {
@@ -36,7 +37,7 @@ export class TremorStrike extends Action {
     this.attackRangeTiles.forEach((tile) => tile.destroy())
     this.attackRangeTiles = []
     UI.instance.endTurnButton.setVisible(false)
-    this.source.subtractActionPoints(TremorStrike.AP_COST)
+    this.source.subtractActionPoints(this.apCost)
     this.cooldown = TremorStrike.COOLDOWN
     UI.instance.actionMenu.displayActionsForPartyMember(this.source)
 
@@ -154,6 +155,7 @@ export class TremorStrike extends Action {
   }
 
   public handleHover(worldX: number, worldY: number) {
+    UI.instance.actionPointDisplay.displayActionPotentialPointCost(this.source, this.apCost)
     this.AOETiles.forEach((tile) => tile.destroy())
     this.AOETiles = []
     if (!Game.instance.map.isWorldXYWithinBounds(worldX, worldY)) {

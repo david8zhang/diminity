@@ -7,10 +7,19 @@ export class BleedEffect extends PartyMemberEffect {
   private bleedTween!: Phaser.Tweens.Tween
   private static TURNS_REMAINING = 3
   private static DAMAGE = 1
+  private bloodDripSprite: Phaser.GameObjects.Sprite
 
   constructor(target: PartyMember) {
     super(target)
     this.turnsRemaining = BleedEffect.TURNS_REMAINING
+    this.bloodDripSprite = Game.instance.add
+      .sprite(
+        target.sprite.x + target.sprite.displayWidth / 2,
+        target.sprite.y - target.sprite.displayHeight / 2,
+        'blood-drip'
+      )
+      .setScale(0.5)
+      .play('blood-drip')
     this.setupBleedTween()
   }
 
@@ -61,5 +70,6 @@ export class BleedEffect extends PartyMemberEffect {
 
   public teardown(): void {
     this.bleedTween.destroy()
+    this.bloodDripSprite.destroy()
   }
 }

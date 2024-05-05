@@ -97,4 +97,15 @@ export const createAnims = (anims: Phaser.Animations.AnimationManager) => {
     repeat: 0,
     frameRate: 12,
   })
+
+  anims.create({
+    key: 'blood-drip',
+    frames: anims.generateFrameNames('blood-drip', {
+      start: 0,
+      end: 11,
+      suffix: '.png',
+    }),
+    repeat: -1,
+    frameRate: 12,
+  })
 }

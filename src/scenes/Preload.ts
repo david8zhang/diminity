@@ -49,6 +49,7 @@ export class Preload extends Phaser.Scene {
       'animations/tremor-strike.png',
       'animations/tremor-strike.json'
     )
+    this.load.atlas('blood-drip', 'animations/blood-drip.png', 'animations/blood-drip.json')
   }
 
   create() {
