@@ -3,6 +3,7 @@ import { Constants, RenderLayer, Side } from '../Constants'
 import { Action } from '../actions/Action'
 import { ActionCreator } from '../actions/ActionCreator'
 import { ActionNames } from '../actions/ActionNames'
+import { StunEffect } from '../effects/StunEffect'
 import { Node } from '../map/Pathfinding'
 
 export interface PartyMemberConfig {
@@ -54,6 +55,9 @@ export class PartyMember {
   public actions: { [key in ActionNames]?: Action }
   public animOverrides: { [key in ActionNames]?: any } = {}
 
+  // If a character is stunned (stun duration > 0), skip their turn
+  public stunEffect: StunEffect
+
   constructor(game: Game, config: PartyMemberConfig) {
     this.game = game
     this.id = config.id
@@ -88,6 +92,18 @@ export class PartyMember {
     if (config.animOverrides) {
       this.animOverrides = config.animOverrides
     }
+    this.stunEffect = new StunEffect(this)
+  }
+
+  handleTurnSkip() {
+    if (this.stunEffect.isActive) {
+      this.stunEffect.decrementStunDuration()
+      if (this.stunEffect.stunDuration == 0) {
+        StunEffect.deactivateStun(this)
+      }
+      return true
+    }
+    return false
   }
 
   startTurn(outlineColor?: number) {

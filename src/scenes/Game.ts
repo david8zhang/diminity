@@ -182,9 +182,13 @@ export default class Game extends Phaser.Scene {
     const partyMemberToActId = this.turnOrder[this.partyMemberToActIndex]
     const partyMemberToAct =
       this.cpu.partyMembers[partyMemberToActId] || this.player.partyMembers[partyMemberToActId]
-    this.startPartyMemberTurn(partyMemberToAct)
-    if (partyMemberToAct.side === Side.CPU) {
-      UI.instance.endTurnButton.setVisible(false)
+    if (partyMemberToAct.handleTurnSkip()) {
+      this.endCurrPartyMemberTurn()
+    } else {
+      this.startPartyMemberTurn(partyMemberToAct)
+      if (partyMemberToAct.side === Side.CPU) {
+        UI.instance.endTurnButton.setVisible(false)
+      }
     }
   }
 

@@ -3,6 +3,7 @@ import { UI } from '../../scenes/UI'
 import { Constants, DamageType, Side } from '../Constants'
 import { PartyMember } from '../controller/PartyMember'
 import { PlayerPartyMember } from '../controller/PlayerPartyMember'
+import { StunEffect } from '../effects/StunEffect'
 import { Action } from './Action'
 import { ActionNames } from './ActionNames'
 
@@ -13,6 +14,7 @@ export class TremorStrike extends Action {
   private static ANGLE_RANGE = 20
   private static AP_COST = 2
   private static COOLDOWN = 3
+  private static STUN_DURATION = 1
 
   public showAOERange: boolean = false
   private AOETiles: Phaser.GameObjects.Rectangle[] = []
@@ -121,6 +123,9 @@ export class TremorStrike extends Action {
       })
       Game.instance.time.delayedCall(250, () => {
         pm.sprite.clearTint()
+        if (pm.currPhysicalArmor <= damage) {
+          StunEffect.activateStun(pm, TremorStrike.STUN_DURATION)
+        }
       })
     })
 
@@ -129,7 +134,6 @@ export class TremorStrike extends Action {
       UI.instance.endTurnButton.setVisible(true)
       const playerPartyMember = this.source as PlayerPartyMember
       playerPartyMember.goBackToIdle()
-      UI.instance.endTurnButton.setVisible(false)
     }
   }
 

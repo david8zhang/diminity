@@ -21,6 +21,11 @@ export class BleedEffect extends PartyMemberEffect {
       .setScale(0.5)
       .play('blood-drip')
     this.setupBleedTween()
+    Game.instance.events.on('update', () => {
+      if (this.target.currHealth == 0) {
+        this.teardown()
+      }
+    })
   }
 
   setupBleedTween() {
