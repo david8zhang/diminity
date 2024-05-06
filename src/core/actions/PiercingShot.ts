@@ -8,7 +8,7 @@ import { Action } from './Action'
 import { ActionNames } from './ActionNames'
 
 export class PiercingShot extends Action {
-  private static ATTACK_RANGE = 20.5
+  private static ATTACK_RANGE = 10.5
   private static AP_COST = 3
   private static TILE_HIGHLIGHT_COLOR = 0xff0000
   private processingAttack: boolean = false

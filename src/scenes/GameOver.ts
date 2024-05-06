@@ -21,11 +21,31 @@ export class GameOver extends Phaser.Scene {
         Constants.WINDOW_HEIGHT / 3,
         this.isVictory ? 'Victory!' : 'Defeat...',
         {
-          fontSize: '40px',
+          fontSize: '80px',
           color: 'white',
+          fontFamily: 'kelmscot',
         }
       )
       .setOrigin(0.5, 0.5)
+
+    const gradient = this.headlineText.context.createLinearGradient(
+      0,
+      0,
+      0,
+      this.headlineText.height
+    )
+
+    if (this.isVictory) {
+      gradient.addColorStop(0, '#0BDA51')
+      gradient.addColorStop(0.5, '#00A36C')
+      gradient.addColorStop(1, '#454B1B')
+    } else {
+      gradient.addColorStop(0, '#FF0000')
+      gradient.addColorStop(0.5, '#C21E56')
+      gradient.addColorStop(1, '#4A0404')
+    }
+
+    this.headlineText.setFill(gradient)
 
     this.button = new Button({
       x: this.headlineText.x,
@@ -40,6 +60,7 @@ export class GameOver extends Phaser.Scene {
       scene: this,
       backgroundColor: 0xffffff,
       fontSize: '15px',
+      fontFamily: 'kelmscot',
     })
   }
 }
