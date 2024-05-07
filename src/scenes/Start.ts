@@ -10,10 +10,10 @@ export class Start extends Phaser.Scene {
       .image(Constants.WINDOW_WIDTH / 2, Constants.WINDOW_HEIGHT / 2, 'bg')
       .setDisplaySize(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT)
       .setOrigin(0.5, 0.5)
-      .setAlpha(0.5)
+      .setAlpha(0.25)
     const titleText = this.add
       .text(Constants.WINDOW_WIDTH / 2, Constants.WINDOW_HEIGHT / 2.5, 'Diminity', {
-        fontSize: '100px',
+        fontSize: '150px',
         color: 'white',
         fontFamily: 'kelmscot',
       })

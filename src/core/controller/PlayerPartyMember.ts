@@ -73,6 +73,7 @@ export class PlayerPartyMember extends PartyMember {
     this.selectedAction = null
     UI.instance.actionMenu.highlightSelectedAction('')
     UI.instance.actionPointDisplay.showAvailableActionPoints(this)
+    UI.instance.actionMenu.displayActionsForPartyMember(this)
   }
 
   showActionPointCostForMove(worldX: number, worldY: number) {

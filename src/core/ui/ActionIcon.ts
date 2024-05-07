@@ -2,7 +2,6 @@ import Game from '../../scenes/Game'
 import { UI } from '../../scenes/UI'
 import { Action } from '../actions/Action'
 import { ActionNames } from '../actions/ActionNames'
-import { ActionState } from '../controller/PlayerPartyMember'
 
 export interface ActionIconConfig {
   position: {
@@ -15,6 +14,7 @@ export class ActionIcon {
   private ui: UI
   private bgRect: Phaser.GameObjects.Rectangle
   private sprite: Phaser.GameObjects.Sprite
+  private insufficientAPOverlay: Phaser.GameObjects.Rectangle
   private cooldownOverlay: Phaser.GameObjects.Rectangle
   private cooldownText: Phaser.GameObjects.Text
   private currActionName: ActionNames | null = null
@@ -38,6 +38,11 @@ export class ActionIcon {
 
     this.cooldownOverlay = this.ui.add
       .rectangle(this.bgRect.x, this.bgRect.y, UI.ICON_BOX_SIZE, UI.ICON_BOX_SIZE, 0x000000, 0.5)
+      .setOrigin(0, 0)
+      .setVisible(false)
+
+    this.insufficientAPOverlay = this.ui.add
+      .rectangle(this.bgRect.x, this.bgRect.y, UI.ICON_BOX_SIZE, UI.ICON_BOX_SIZE, 0xff0000, 0.5)
       .setOrigin(0, 0)
       .setVisible(false)
     this.cooldownText = this.ui.add
@@ -66,6 +71,12 @@ export class ActionIcon {
     } else {
       this.cooldownText.setVisible(false)
       this.cooldownOverlay.setVisible(false)
+    }
+
+    if (action.hasInsufficientAP()) {
+      this.insufficientAPOverlay.setVisible(true)
+    } else {
+      this.insufficientAPOverlay.setVisible(false)
     }
   }
 

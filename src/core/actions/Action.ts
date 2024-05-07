@@ -31,6 +31,10 @@ export abstract class Action {
     }
   }
 
+  hasInsufficientAP() {
+    return this.apCost > this.source.currActionPoints
+  }
+
   public isValidAttackTarget(partyMember: PartyMember): boolean {
     const tileDistance = Game.instance.map.getTileDistance(
       this.source.sprite.x,
