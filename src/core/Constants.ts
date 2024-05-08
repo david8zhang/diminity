@@ -14,6 +14,7 @@ export enum RenderLayer {
   PLAYER = 'PLAYER',
   EFFECTS = 'EFFECTS',
   TILEMAP = 'TILEMAP',
+  ATTACKS = 'ATTACKS',
 }
 
 export class Constants {
@@ -32,6 +33,7 @@ export class Constants {
   public static END_TURN_BUTTON_COLOR = 0x227093
 
   public static LAYERS = {
+    [RenderLayer.ATTACKS]: 100,
     [RenderLayer.PLAYER]: 75,
     [RenderLayer.EFFECTS]: 50,
     [RenderLayer.TILEMAP]: 25,
@@ -57,6 +59,7 @@ export class Constants {
         [ActionNames.BASIC_ATTACK]: 'bonk',
       },
       actionNames: [ActionNames.FIREBALL],
+      name: 'Wizard',
     },
     {
       rowColPos: {
@@ -77,6 +80,7 @@ export class Constants {
         [ActionNames.BASIC_ATTACK]: 'slash',
       },
       actionNames: [ActionNames.TREMOR_STRIKE],
+      name: 'Fighter',
     },
     {
       rowColPos: {
@@ -97,6 +101,7 @@ export class Constants {
         [ActionNames.BASIC_ATTACK]: 'stab',
       },
       actionNames: [ActionNames.PIERCING_SHOT],
+      name: 'Rogue',
     },
   ]
 
@@ -114,6 +119,7 @@ export class Constants {
       animOverrides: {
         [ActionNames.BASIC_ATTACK]: 'swipe',
       },
+      name: 'Rat',
     },
     {
       texture: 'spider',
@@ -128,6 +134,7 @@ export class Constants {
       animOverrides: {
         [ActionNames.BASIC_ATTACK]: 'swipe',
       },
+      name: 'Spider',
     },
   ]
 }

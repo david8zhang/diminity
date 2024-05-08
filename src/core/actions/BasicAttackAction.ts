@@ -84,7 +84,7 @@ export class BasicAttackAction extends Action {
         .setPosition(target.sprite.x, target.sprite.y)
         .setOrigin(0, 0.5)
         .setVisible(true)
-        .setDepth(Constants.LAYERS[RenderLayer.EFFECTS])
+        .setDepth(Constants.LAYERS[RenderLayer.ATTACKS])
       let animName = 'slash'
       if (this.source.animOverrides[ActionNames.BASIC_ATTACK]) {
         animName = this.source.animOverrides[ActionNames.BASIC_ATTACK]

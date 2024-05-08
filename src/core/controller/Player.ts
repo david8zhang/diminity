@@ -34,7 +34,7 @@ export class Player extends PartyController {
         }
         if (Game.instance.map.isWorldXYWithinBounds(pointer.worldX, pointer.worldY)) {
           const partyMember = this.game.getPartyMemberAtPosition(pointer.worldX, pointer.worldY)
-          if (partyMember && partyMember.id !== this.selectedPartyMember.id) {
+          if (partyMember) {
             UI.instance.displayPartyMemberFloatingStatBar(partyMember)
           } else {
             UI.instance.hideFloatingStatBars()

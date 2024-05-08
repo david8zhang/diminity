@@ -14,8 +14,9 @@ export class CameraManager {
       Constants.GAME_HEIGHT + (Constants.WINDOW_HEIGHT - Constants.GAME_HEIGHT) / mainCamera.zoom
     )
     this.setupZoomListener()
+    this.scene.input.mouse?.disableContextMenu()
     this.scene.input.on(Phaser.Input.Events.POINTER_MOVE, (p: Phaser.Input.Pointer) => {
-      if (!p.middleButtonDown()) return
+      if (!p.rightButtonDown()) return
       mainCamera.scrollX -= (p.x - p.prevPosition.x) / mainCamera.zoom
       mainCamera.scrollY -= (p.y - p.prevPosition.y) / mainCamera.zoom
       this.fixedZoomCenter = {

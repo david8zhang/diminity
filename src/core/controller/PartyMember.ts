@@ -30,6 +30,7 @@ export interface PartyMemberConfig {
   strength: number
   dexterity: number
   wisdom: number
+  name: string
 }
 
 export class PartyMember {
@@ -52,6 +53,7 @@ export class PartyMember {
   public strength: number = 0
   public dexterity: number = 0
   public wisdom: number = 0
+  public name: string = ''
   public side: Side
   public actions: { [key in ActionNames]?: Action }
   public animOverrides: { [key in ActionNames]?: any } = {}
@@ -62,6 +64,7 @@ export class PartyMember {
   constructor(game: Game, config: PartyMemberConfig) {
     this.game = game
     this.id = config.id
+    this.name = config.name
     this.currHealth = config.maxHealth
     this.maxHealth = config.maxHealth
     this.currPhysicalArmor = config.maxPhysicalArmor
@@ -82,9 +85,6 @@ export class PartyMember {
       .sprite(position.x, position.y, config.texture)
       .setInteractive({ useHandCursor: 'true' })
       .setDepth(Constants.LAYERS[RenderLayer.PLAYER])
-      .on(Phaser.Input.Events.POINTER_DOWN, () => {
-        UI.instance.focusOnPartyMember(this.id)
-      })
 
     this.strength = config.strength
     this.dexterity = config.dexterity

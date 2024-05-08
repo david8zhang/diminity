@@ -95,12 +95,12 @@ export class UI extends Phaser.Scene {
     // Un-highlight the previous party member
     if (this.partyMemberToFocusOnId) {
       const prevPartyMember = gameInstance.getPartyMember(this.partyMemberToFocusOnId)
-      console.log(prevPartyMember)
       gameInstance.postFxPlugin.remove(prevPartyMember.sprite)
     }
 
-    if (gameInstance.partyMemberToActId !== partyMemberId) {
-      this.partyMemberToFocusOnId = partyMemberId
+    this.partyMemberToFocusOnId = partyMemberId
+
+    if (this.partyMemberToFocusOnId !== gameInstance.partyMemberToActId) {
       gameInstance.postFxPlugin.add(partyMemberToPanTo.sprite, {
         thickness: 2,
         outlineColor: 0x00ff00,
@@ -108,6 +108,13 @@ export class UI extends Phaser.Scene {
     }
 
     gameInstance.cameras.main.pan(partyMemberToPanTo.sprite.x, partyMemberToPanTo.sprite.y, 500)
+  }
+
+  showStatBarForFocusedPartyMember() {
+    if (this.partyMemberToFocusOnId) {
+      const partyMember = Game.instance.getPartyMember(this.partyMemberToFocusOnId)
+      this.displayPartyMemberFloatingStatBar(partyMember)
+    }
   }
 
   createTurnOrderCards() {
