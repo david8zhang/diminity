@@ -1,3 +1,4 @@
+import Game from '../../scenes/Game'
 import { UI } from '../../scenes/UI'
 
 export interface TurnOrderCardConfig {
@@ -30,6 +31,10 @@ export class TurnOrderCard {
       .setOrigin(0.5, 0.5)
       .setScale(2)
     this.partyMemberId = config.partyMemberId
+
+    this.bgRect.setInteractive({ useHandCursor: true }).on(Phaser.Input.Events.POINTER_DOWN, () => {
+      this.ui.focusOnPartyMember(this.partyMemberId)
+    })
   }
 
   setVisible(isVisible: boolean) {

@@ -24,6 +24,7 @@ export class UI extends Phaser.Scene {
   public turnOrderCards: TurnOrderCard[] = []
   public profileImage!: ProfileImage
   public actionMenu!: ActionMenu
+  public partyMemberToFocusOnId: string | null = null
 
   public endTurnButton!: Button
 
@@ -85,6 +86,28 @@ export class UI extends Phaser.Scene {
     if (Game.instance) {
       Game.instance.onUIReady()
     }
+  }
+
+  focusOnPartyMember(partyMemberId: string) {
+    const gameInstance = Game.instance
+    const partyMemberToPanTo = gameInstance.getPartyMember(partyMemberId)
+
+    // Un-highlight the previous party member
+    if (this.partyMemberToFocusOnId) {
+      const prevPartyMember = gameInstance.getPartyMember(this.partyMemberToFocusOnId)
+      console.log(prevPartyMember)
+      gameInstance.postFxPlugin.remove(prevPartyMember.sprite)
+    }
+
+    if (gameInstance.partyMemberToActId !== partyMemberId) {
+      this.partyMemberToFocusOnId = partyMemberId
+      gameInstance.postFxPlugin.add(partyMemberToPanTo.sprite, {
+        thickness: 2,
+        outlineColor: 0x00ff00,
+      })
+    }
+
+    gameInstance.cameras.main.pan(partyMemberToPanTo.sprite.x, partyMemberToPanTo.sprite.y, 500)
   }
 
   createTurnOrderCards() {

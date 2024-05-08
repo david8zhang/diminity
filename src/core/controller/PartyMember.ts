@@ -1,4 +1,5 @@
 import Game from '../../scenes/Game'
+import { UI } from '../../scenes/UI'
 import { Constants, RenderLayer, Side } from '../Constants'
 import { Action } from '../actions/Action'
 import { ActionCreator } from '../actions/ActionCreator'
@@ -81,6 +82,10 @@ export class PartyMember {
       .sprite(position.x, position.y, config.texture)
       .setInteractive({ useHandCursor: 'true' })
       .setDepth(Constants.LAYERS[RenderLayer.PLAYER])
+      .on(Phaser.Input.Events.POINTER_DOWN, () => {
+        UI.instance.focusOnPartyMember(this.id)
+      })
+
     this.strength = config.strength
     this.dexterity = config.dexterity
     this.wisdom = config.wisdom
