@@ -30,6 +30,12 @@ export class ActionIcon {
       .on(Phaser.Input.Events.POINTER_UP, () => {
         this.onActionClicked()
       })
+      .on(Phaser.Input.Events.POINTER_MOVE, () => {
+        this.onActionHover()
+      })
+      .on(Phaser.Input.Events.POINTER_OUT, () => {
+        UI.instance.actionDescription.setVisible(false)
+      })
 
     this.sprite = this.ui.add
       .sprite(this.bgRect.x, this.bgRect.y, '')
@@ -85,6 +91,19 @@ export class ActionIcon {
       const selectedPlayerPm = Game.instance.player.selectedPartyMember
       if (selectedPlayerPm) {
         selectedPlayerPm.onActionClick(this.currActionName)
+      }
+    }
+  }
+
+  onActionHover() {
+    if (this.currActionName) {
+      const selectedPlayerPm = Game.instance.player.selectedPartyMember
+      if (selectedPlayerPm) {
+        const action = selectedPlayerPm.actions[this.currActionName]
+        UI.instance.actionDescription.displayAction(action!, {
+          x: this.sprite.x,
+          y: this.sprite.y - this.sprite.displayHeight / 2 - 50,
+        })
       }
     }
   }

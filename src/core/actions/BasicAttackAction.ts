@@ -10,12 +10,14 @@ export class BasicAttackAction extends Action {
   public static ATTACK_RANGE = 2.5
   public static AP_COST = 2
   private static ATTACK_RANGE_HIGHLIGHT_COLOR = 0xff0000
+  private static DESCRIPTION = 'A basic attack'
+
   private processingAttack: boolean = false
   private animSprite: Phaser.GameObjects.Sprite
   private attackRangeTiles: Phaser.GameObjects.Rectangle[] = []
 
   constructor(partyMember: PartyMember) {
-    super(ActionNames.BASIC_ATTACK, 'sword-icon', partyMember)
+    super(ActionNames.BASIC_ATTACK, 'sword-icon', partyMember, BasicAttackAction.DESCRIPTION)
     this.apCost = BasicAttackAction.AP_COST
     this.animSprite = Game.instance.add.sprite(0, 0, '').setVisible(false)
     this.range = BasicAttackAction.ATTACK_RANGE

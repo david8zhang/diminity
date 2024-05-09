@@ -11,12 +11,14 @@ export class PiercingShot extends Action {
   private static ATTACK_RANGE = 10.5
   private static AP_COST = 3
   private static TILE_HIGHLIGHT_COLOR = 0xff0000
+  private static DESCRIPTION =
+    'A precise arrow shot that deals massive damage and causes enemies to bleed for 3 turns.'
   private processingAttack: boolean = false
   private arrowSprite: Phaser.GameObjects.Sprite
   private attackRangeTiles: Phaser.GameObjects.Rectangle[] = []
 
   constructor(partyMember: PartyMember) {
-    super(ActionNames.PIERCING_SHOT, 'piercing-shot', partyMember)
+    super(ActionNames.PIERCING_SHOT, 'piercing-shot', partyMember, PiercingShot.DESCRIPTION)
     this.apCost = PiercingShot.AP_COST
     this.arrowSprite = Game.instance.add.sprite(0, 0, 'arrow').setVisible(false)
     this.range = PiercingShot.ATTACK_RANGE

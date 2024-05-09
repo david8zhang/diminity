@@ -15,13 +15,14 @@ export class TremorStrike extends Action {
   private static AP_COST = 2
   private static COOLDOWN = 3
   private static STUN_DURATION = 1
+  private static DESCRIPTION = 'Slams the ground, causing a tremor that stuns all unarmored enemies'
 
   public showAOERange: boolean = false
   private AOETiles: Phaser.GameObjects.Rectangle[] = []
   public attackRangeTiles: Phaser.GameObjects.Rectangle[] = []
 
   constructor(partyMember: PartyMember) {
-    super(ActionNames.TREMOR_STRIKE, 'tremor-strike-icon', partyMember)
+    super(ActionNames.TREMOR_STRIKE, 'tremor-strike-icon', partyMember, TremorStrike.DESCRIPTION)
     this.apCost = TremorStrike.AP_COST
   }
 

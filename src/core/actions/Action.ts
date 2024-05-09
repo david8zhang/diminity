@@ -7,16 +7,18 @@ import { ActionNames } from './ActionNames'
 
 export abstract class Action {
   public name: ActionNames
+  public description: string
   public texture: string
   public source: PartyMember
   public apCost: number = 0
   public range: number = 0
   public cooldown: number = 0
 
-  constructor(name: ActionNames, texture: string, source: PartyMember) {
+  constructor(name: ActionNames, texture: string, source: PartyMember, description: string) {
     this.name = name
     this.texture = texture
     this.source = source
+    this.description = description
   }
   public abstract handleClick(worldX: number, worldY: number): void
 

@@ -14,6 +14,8 @@ export class Fireball extends Action {
   private static COOLDOWN = 3
   private static ATTACK_RANGE_HIGHLIGHT_COLOR = 0xff0000
   private static AOE_HIGHLIGHT_COLOR = 0xffbf00
+  private static DESCRIPTION =
+    'Shoots an exploding fireball which leaves a scorched area. Burns everything inside the area for 3 turns'
 
   private processingAttack: boolean = false
   private fireballSprite!: Phaser.GameObjects.Sprite
@@ -22,7 +24,7 @@ export class Fireball extends Action {
   private attackRangeTiles: Phaser.GameObjects.Rectangle[] = []
 
   constructor(partyMember: PartyMember) {
-    super(ActionNames.FIREBALL, 'fireball-icon', partyMember)
+    super(ActionNames.FIREBALL, 'fireball-icon', partyMember, Fireball.DESCRIPTION)
     this.apCost = Fireball.AP_COST
     this.fireballSprite = Game.instance.add.sprite(0, 0, 'fireball').setVisible(false).setScale(1.5)
     this.fireballSprite.on(Phaser.Animations.Events.ANIMATION_UPDATE, (_, frame) => {

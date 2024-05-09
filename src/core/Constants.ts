@@ -15,6 +15,7 @@ export enum RenderLayer {
   EFFECTS = 'EFFECTS',
   TILEMAP = 'TILEMAP',
   ATTACKS = 'ATTACKS',
+  UI = 'UI',
 }
 
 export class Constants {
@@ -33,6 +34,7 @@ export class Constants {
   public static END_TURN_BUTTON_COLOR = 0x227093
 
   public static LAYERS = {
+    [RenderLayer.UI]: 125,
     [RenderLayer.ATTACKS]: 100,
     [RenderLayer.PLAYER]: 75,
     [RenderLayer.EFFECTS]: 50,

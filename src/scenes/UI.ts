@@ -1,6 +1,7 @@
 import { Constants, Side } from '../core/Constants'
 import { PartyMember } from '../core/controller/PartyMember'
 import { PlayerPartyMember } from '../core/controller/PlayerPartyMember'
+import { ActionDescription } from '../core/ui/ActionDescription'
 import { ActionMenu } from '../core/ui/ActionMenu'
 import { ActionPointDisplay } from '../core/ui/ActionPointDisplay'
 import { Button } from '../core/ui/Button'
@@ -24,6 +25,7 @@ export class UI extends Phaser.Scene {
   public turnOrderCards: TurnOrderCard[] = []
   public profileImage!: ProfileImage
   public actionMenu!: ActionMenu
+  public actionDescription!: ActionDescription
   public partyMemberToFocusOnId: string | null = null
 
   public endTurnButton!: Button
@@ -83,6 +85,14 @@ export class UI extends Phaser.Scene {
     })
 
     this.actionPointDisplay = new ActionPointDisplay(this)
+
+    this.actionDescription = new ActionDescription(this, {
+      position: {
+        x: 100,
+        y: 100,
+      },
+    })
+
     if (Game.instance) {
       Game.instance.onUIReady()
     }
